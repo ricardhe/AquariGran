@@ -1,4 +1,4 @@
-/*  
+﻿/*  
     Joytick & LCD & Menu   by JMLoureiro77
 
     http://jmloureiro77.blogspot.com.es
@@ -276,3 +276,177 @@ int leeJoystick(){
     }
   lastJoyPos=joyRead;
 }
+
+
+	//myFile = SD.open(nomfitxerConfig, FILE_READ);//abrimos  el archivo 
+	//if (myFile) {
+	//	if (myFile.available())
+	//	{
+	//		Serial.println(nomfitxerConfig);
+	//		contingutFitxerConf = myFile.readString();
+	//	}
+	//	
+	//	//while (myFile.available()) {
+
+	//	//	char caracter = myFile.read();
+	//	//	contingutFitxerConf = contingutFitxerConf + caracter;
+
+	//	//	//contingutFitxerConf = contingutFitxerConf + myFile.read();
+
+	//	//	//Serial.write(myFile.read());
+	//	//}
+	//	myFile.close(); //cerramos el archivo
+	//}
+	//else {
+	//	Serial.println("Error al abrir el archivo");
+	//}
+
+	//const byte bufferSize = 150; //define number of bytes expected on the JSON thread
+	//char json[bufferSize]; //create a char array buffer that is 150 bytes in size in this case
+	//myFile = SD.open(nomfitxerConfig, FILE_READ);//abrimos  el archivo 
+	//if (myFile) {
+
+	//		if (myFile.available())
+	//		{
+	//			myFile.readBytes(json, bufferSize);
+	//			myFile.close();
+	//			Serial.println(json); //prints whatever JSON string values were read
+	//			StaticJsonBuffer<JSON_OBJECT_SIZE(12)> jsonBuffer; //We know our JSON string just has 12 objects only and no arrays, so our buffer is set to handle that many
+	//			//DynamicJsonBuffer  jsonBuffer(200);
+	//			JsonObject& root = jsonBuffer.parseObject(json);    // breaks the JSON string into individual items, saves into JsonObject 'root'
+	//			if (!root.success()) {
+	//				Serial.println("parseObject() failed");
+	//				return;   //if parsing failed, this will exit the function and not change the values to 00
+
+	//			}
+	//			else { // update variables
+	//				Serial.println("parseObject() success");
+	//				
+	//			}
+
+
+	//		}
+	//		else 
+	//		{
+	//			myFile.close(); //cerramos el archivo
+	//		}
+	//		
+	//	}
+	//	else {
+	//		Serial.println("Error al abrir el archivo");
+	//	}
+
+	//char json[] = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
+
+	//myFile = SD.open(nomfitxerConfig, FILE_READ);//abrimos  el archivo 
+	//if (myFile) {
+
+	//		if (myFile.available())
+	//		{
+	//			contingutFitxerConf = myFile.readString();
+	//		}
+	//		myFile.close();
+	//}
+	//Serial.println(contingutFitxerConf);
+
+	////
+	//// Step 1: Reserve memory space
+	////
+	//StaticJsonBuffer<200> jsonBuffer;
+
+	////
+	//// Step 2: Deserialize the JSON string
+	////
+	//JsonObject& root = jsonBuffer.parseObject(contingutFitxerConf);
+
+	//if (!root.success())
+	//{
+	//	Serial.println("parseObject() failed");
+	//	return;
+	//}
+	//else
+	//{
+	//	Serial.println("parseObject success");
+	//}
+
+	//Serial.println(contingutFitxerConf);
+	//
+	////char cJson[]= new char[contingutFitxerConf.length()];
+	//JsonObject& root = jsonBuffer.parseObject(contingutFitxerConf.toCharArray());
+
+	//if (!root.success()) {
+	//	Serial.println("parseObject() failed");
+	//	return;
+	//}
+
+	//char* skimmer = root["﻿Skimmer"];
+
+	//Serial.println(skimmer);
+
+//char json[MAX_FILE_SIZE];
+//readFile("confPins.txt", json, MAX_FILE_SIZE);
+//
+//Serial.println(json); // <- SHOW ME THE OUTPUT OF THIS!!!!!
+//
+//StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+//
+//JsonObject& root = jsonBuffer.parseObject(json);
+//
+//if (!root.success()) {
+//	Serial.println("parseObject() failed");
+//	return;
+//}
+//else
+//{
+//	Serial.println("parseObject() success");
+//}
+	
+	//myFile = SD.open(nomfitxerConfig, FILE_READ);//abrimos  el archivo 
+	//if (myFile) {
+
+	//		if (myFile.available())
+	//		{
+	//			contingutFitxerConf = myFile.readString();
+	//		}
+	//		myFile.close();
+	//}
+	//Serial.println(contingutFitxerConf);
+
+
+				//DynamicJsonBuffer  jsonBuffer(200);
+	//JsonObject& root = jsonBuffer.parseObject(SD.open(nomfitxerConfig, FILE_READ));    // breaks the JSON string into individual items, saves into JsonObject 'root'
+	//			if (!root.success()) {
+	//				Serial.println("parseObject() failed");
+	//				return;   //if parsing failed, this will exit the function and not change the values to 00
+
+	//			}
+	//			else { // update variables
+	//				Serial.println("parseObject() success");
+	//				
+	//			}
+	//aJsonObject* root = aJson.parse(contingutFitxerConf.c_str());
+
+	//if (root != NULL) {
+	//	Serial.println("Parsed successfully 1 " );
+	//	aJsonObject* name = aJson.getObjectItem(root, "name");
+	//	
+	//	Serial.println(name);
+	//}
+	//else {
+	//	Serial.println("Parsed error 1 ");
+	//}
+	//aJsonObject* jsonObject = aJson.parse(SD.open(nomfitxerConfig, FILE_READ));
+
+
+		StaticJsonBuffer<1000> jsonBuffer;
+	//DynamicJsonBuffer  jsonBuffer(200);
+	String contingutFitxerConf;
+
+#define MAX_FILE_SIZE 1024
+#define JSON_BUFFER_SIZE 200
+
+	void readFile(const char *fileName, char *buffer, size_t maxSize) {
+		File file = SD.open(fileName, FILE_READ);
+		file.readBytes(buffer, maxSize);
+		file.close();
+	}

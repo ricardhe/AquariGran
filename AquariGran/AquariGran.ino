@@ -4,8 +4,10 @@
 #include <Wire.h>
 #include "RTClib.h"
 #include <SD.h>
-#include <ArduinoJson.h>
+#include "cPin.h"
+//#include <ArduinoJson.h>
 //#include <aJSON.h>
+
 
 //////////////////////////////////////////////////////////////// Variables LCD //////////////////////////////////////////////////////////////
 
@@ -58,21 +60,21 @@ int valPush = 0; //valor pulsació Joystick
 
 		const char cntEstatReles[] = "Estat Reles";
 
-		const char cntSkimmer[] = "Skimmer";
-		const char cntBombaCircuilacio1[] = "Bomba Circ 1";
-		const char cntBombaCircuilacio2[] = "Bomba Circ 2";
-		const char cntBombesPujada[] = "Bombes Pujada";
-		const char cntBombaSump[] = "Bomba Sump";
-		const char cntCalentador[] = "Calentador";
-		const char cntRefrigerador[] = "Refrigerador";
-		const char cntVentiladorAcuari[] = "Ventil. Acuari";
-		const char cntVentiladorInternSump[] = "Ventil. Sump";
-		const char cntLlumRefugi[] = "Llum Refugi";
-		const char cntUV[] = "UV";
-		const char cntAccions[] = "Accions";
-		const char cntDonardeMenjar[] = "Donar de Menjar";
-		const char cntPararCirculacio[] = "Parar Circulació";
-		const char cntCanviAigua[] = "Canvi dAigua";
+		char* cntSkimmer = "Skimmer";
+		char* cntBombaCircuilacio1 = "Bomba Circ 1";
+		char* cntBombaCircuilacio2 = "Bomba Circ 2";
+		char* cntBombesPujada = "Bombes Pujada";
+		char* cntBombaSump = "Bomba Sump";
+		char* cntCalentador = "Calentador";
+		char* cntRefrigerador = "Refrigerador";
+		char* cntVentiladorAcuari = "Ventil. Acuari";
+		char* cntVentiladorInternSump = "Ventil. Sump";
+		char* cntLlumRefugi = "Llum Refugi";
+		char* cntUV = "UV";
+		char* cntAccions = "Accions";
+		char* cntDonardeMenjar = "Donar de Menjar";
+		char* cntPararCirculacio = "Parar Circulació";
+		char* cntCanviAigua = "Canvi dAigua";
 
 
 		//this controls the menu backend and the event generation
@@ -101,17 +103,17 @@ int valPush = 0; //valor pulsació Joystick
 //////////////////////////////////////////////////////////////// Variables Relés //////////////////////////////////////////////////////////////
 #pragma region Variables Reles
 
-int pinReleSkimmer = 3;
-int pinReleBombaCirc1 = 6;
-int pinReleBombaCirc2 = 2;
-int pinReleBombesPujada = 2;
-int pinReleBombaSump = 2;
-int pinReleCalentador = 2;
-int pinReleRefrigerador = 2;
-int pinReleVentiladorAcuari = 2;
-int pinRelemVentiladorInternSump = 2;
-int pinReleLlumRefugi = 2;
-int pinReleUV = 2;
+int numPinReleSkimmer = 3;
+int numPinReleBombaCirc1 = 6;
+int numPinReleBombaCirc2 = 2;
+int numPinReleBombesPujada = 2;
+int numPinReleBombaSump = 2;
+int numPinReleCalentador = 2;
+int numPinReleRefrigerador = 2;
+int numPinReleVentiladorAcuari = 2;
+int numPinRelemVentiladorInternSump = 2;
+int numPinReleLlumRefugi = 2;
+int numPinReleUV = 2;
 
 int valpinReleSkimmer = 1;
 int valpinReleBombaCirc1 = 1;
@@ -124,6 +126,18 @@ int valpinReleVentiladorAcuari = 0;
 int valpinRelemVentiladorInternSump = 0;
 int valpinReleLlumRefugi = 0;
 int valpinReleUV = 0;
+
+cPin pinSkimmer ;
+cPin pinBombaCirc1 ;
+cPin pinBombaCirc2 ;
+cPin pinBombesPujada ;
+cPin pinBombaSump ;
+cPin pinCalentador ;
+cPin pinRefrigerador ;
+cPin pinVentiladorAcuari ;
+cPin pinVentiladorInternSump ;
+cPin pinLlumRefugi ;
+cPin pinUV;
 
 #pragma endregion
 
@@ -158,25 +172,10 @@ int valpinReleUV = 0;
 
 /////////////////////////////////////////////////////////////// Variables Json Parser //////////////////////////////////////////////////////////////
 #pragma region Json Parser
-	StaticJsonBuffer<1000> jsonBuffer;
-	//DynamicJsonBuffer  jsonBuffer(200);
-	String contingutFitxerConf;
-
-#define MAX_FILE_SIZE 1024
-#define JSON_BUFFER_SIZE 200
-
-	void readFile(const char *fileName, char *buffer, size_t maxSize) {
-		File file = SD.open(fileName, FILE_READ);
-		file.readBytes(buffer, maxSize);
-		file.close();
-	}
-
-
 
 #pragma endregion
 
 
-	
 
 void menuSetup()
 {
@@ -290,17 +289,17 @@ void setup() {
 	pinMode(joyPinY, INPUT);
 	pinMode(joyPush, INPUT_PULLUP);
 
-	pinMode(pinReleSkimmer, OUTPUT);
-	pinMode(pinReleBombaCirc1, OUTPUT);
-	pinMode(pinReleBombaCirc2, OUTPUT);
-	pinMode(pinReleBombesPujada, OUTPUT);
-	pinMode(pinReleBombaSump, OUTPUT);
-	pinMode(pinReleCalentador, OUTPUT);
-	pinMode(pinReleRefrigerador, OUTPUT);
-	pinMode(pinReleVentiladorAcuari, OUTPUT);
-	pinMode(pinRelemVentiladorInternSump, OUTPUT);
-	pinMode(pinReleLlumRefugi, OUTPUT);
-	pinMode(pinReleUV, OUTPUT);
+	//pinMode(pinReleSkimmer, OUTPUT);
+	//pinMode(pinReleBombaCirc1, OUTPUT);
+	//pinMode(pinReleBombaCirc2, OUTPUT);
+	//pinMode(pinReleBombesPujada, OUTPUT);
+	//pinMode(pinReleBombaSump, OUTPUT);
+	//pinMode(pinReleCalentador, OUTPUT);
+	//pinMode(pinReleRefrigerador, OUTPUT);
+	//pinMode(pinReleVentiladorAcuari, OUTPUT);
+	//pinMode(pinRelemVentiladorInternSump, OUTPUT);
+	//pinMode(pinReleLlumRefugi, OUTPUT);
+	//pinMode(pinReleUV, OUTPUT);
 
 	Serial.begin(9600);
 
@@ -308,7 +307,7 @@ void setup() {
 	EscriuPantalla();
 	Serial.println("Comencem navegació pel menú");
 
-	EscriuPinDigital(valpinReleSkimmer, pinReleSkimmer);
+	EscriuPinDigital(valpinReleSkimmer, numPinReleSkimmer);
 
 	if (!rtc.begin()) {
 		Serial.println(F("Couldn't find RTC"));
@@ -323,167 +322,6 @@ void setup() {
 		return;
 	}
 
-	contingutFitxerConf = "";
-	//myFile = SD.open(nomfitxerConfig, FILE_READ);//abrimos  el archivo 
-	//if (myFile) {
-	//	if (myFile.available())
-	//	{
-	//		Serial.println(nomfitxerConfig);
-	//		contingutFitxerConf = myFile.readString();
-	//	}
-	//	
-	//	//while (myFile.available()) {
-
-	//	//	char caracter = myFile.read();
-	//	//	contingutFitxerConf = contingutFitxerConf + caracter;
-
-	//	//	//contingutFitxerConf = contingutFitxerConf + myFile.read();
-
-	//	//	//Serial.write(myFile.read());
-	//	//}
-	//	myFile.close(); //cerramos el archivo
-	//}
-	//else {
-	//	Serial.println("Error al abrir el archivo");
-	//}
-
-	//const byte bufferSize = 150; //define number of bytes expected on the JSON thread
-	//char json[bufferSize]; //create a char array buffer that is 150 bytes in size in this case
-	//myFile = SD.open(nomfitxerConfig, FILE_READ);//abrimos  el archivo 
-	//if (myFile) {
-
-	//		if (myFile.available())
-	//		{
-	//			myFile.readBytes(json, bufferSize);
-	//			myFile.close();
-	//			Serial.println(json); //prints whatever JSON string values were read
-	//			StaticJsonBuffer<JSON_OBJECT_SIZE(12)> jsonBuffer; //We know our JSON string just has 12 objects only and no arrays, so our buffer is set to handle that many
-	//			//DynamicJsonBuffer  jsonBuffer(200);
-	//			JsonObject& root = jsonBuffer.parseObject(json);    // breaks the JSON string into individual items, saves into JsonObject 'root'
-	//			if (!root.success()) {
-	//				Serial.println("parseObject() failed");
-	//				return;   //if parsing failed, this will exit the function and not change the values to 00
-
-	//			}
-	//			else { // update variables
-	//				Serial.println("parseObject() success");
-	//				
-	//			}
-
-
-	//		}
-	//		else 
-	//		{
-	//			myFile.close(); //cerramos el archivo
-	//		}
-	//		
-	//	}
-	//	else {
-	//		Serial.println("Error al abrir el archivo");
-	//	}
-
-	//char json[] = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
-
-	//myFile = SD.open(nomfitxerConfig, FILE_READ);//abrimos  el archivo 
-	//if (myFile) {
-
-	//		if (myFile.available())
-	//		{
-	//			contingutFitxerConf = myFile.readString();
-	//		}
-	//		myFile.close();
-	//}
-	//Serial.println(contingutFitxerConf);
-
-	////
-	//// Step 1: Reserve memory space
-	////
-	//StaticJsonBuffer<200> jsonBuffer;
-
-	////
-	//// Step 2: Deserialize the JSON string
-	////
-	//JsonObject& root = jsonBuffer.parseObject(contingutFitxerConf);
-
-	//if (!root.success())
-	//{
-	//	Serial.println("parseObject() failed");
-	//	return;
-	//}
-	//else
-	//{
-	//	Serial.println("parseObject success");
-	//}
-
-	//Serial.println(contingutFitxerConf);
-	//
-	////char cJson[]= new char[contingutFitxerConf.length()];
-	//JsonObject& root = jsonBuffer.parseObject(contingutFitxerConf.toCharArray());
-
-	//if (!root.success()) {
-	//	Serial.println("parseObject() failed");
-	//	return;
-	//}
-
-	//char* skimmer = root["﻿Skimmer"];
-
-	//Serial.println(skimmer);
-
-//char json[MAX_FILE_SIZE];
-//readFile("confPins.txt", json, MAX_FILE_SIZE);
-//
-//Serial.println(json); // <- SHOW ME THE OUTPUT OF THIS!!!!!
-//
-//StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
-//
-//JsonObject& root = jsonBuffer.parseObject(json);
-//
-//if (!root.success()) {
-//	Serial.println("parseObject() failed");
-//	return;
-//}
-//else
-//{
-//	Serial.println("parseObject() success");
-//}
-	
-	//myFile = SD.open(nomfitxerConfig, FILE_READ);//abrimos  el archivo 
-	//if (myFile) {
-
-	//		if (myFile.available())
-	//		{
-	//			contingutFitxerConf = myFile.readString();
-	//		}
-	//		myFile.close();
-	//}
-	//Serial.println(contingutFitxerConf);
-
-
-				//DynamicJsonBuffer  jsonBuffer(200);
-	//JsonObject& root = jsonBuffer.parseObject(SD.open(nomfitxerConfig, FILE_READ));    // breaks the JSON string into individual items, saves into JsonObject 'root'
-	//			if (!root.success()) {
-	//				Serial.println("parseObject() failed");
-	//				return;   //if parsing failed, this will exit the function and not change the values to 00
-
-	//			}
-	//			else { // update variables
-	//				Serial.println("parseObject() success");
-	//				
-	//			}
-	//aJsonObject* root = aJson.parse(contingutFitxerConf.c_str());
-
-	//if (root != NULL) {
-	//	Serial.println("Parsed successfully 1 " );
-	//	aJsonObject* name = aJson.getObjectItem(root, "name");
-	//	
-	//	Serial.println(name);
-	//}
-	//else {
-	//	Serial.println("Parsed error 1 ");
-	//}
-	//aJsonObject* jsonObject = aJson.parse(SD.open(nomfitxerConfig, FILE_READ));
-
-
 	// Si se ha perdido la corriente, fijar fecha y hora
 	if (rtc.lostPower()) {
 		// Fijar a fecha y hora de compilacion
@@ -492,6 +330,17 @@ void setup() {
 		// Fijar a fecha y hora específica. En el ejemplo, 21 de Enero de 2016 a las 03:00:00
 		// rtc.adjust(DateTime(2016, 1, 21, 3, 0, 0));
 	}
+
+	pinSkimmer = cPin(cntSkimmer, numPinReleSkimmer, valpinReleSkimmer, 'O', 'A');
+	
+	programacioDiaria progBombaSump = { -1, { {1000,1015},{1100,1130} } };
+	pinBombaSump = cPin(cntBombaSump,  numPinReleBombaSump, valpinReleBombaSump, 'T', 'D', progBombaSump);
+
+	programacioDiaria progUVDilluns = { 1,{ { 1000,1015 },{ 1100,1130 } } };
+	programacioDiaria progUVDimarts = { 2,{ { 1000,1015 },{ 1100,1130 } } };
+	programacioSetmanal progUV = { progUVDilluns, progUVDimarts };
+	pinUV = cPin(cntUV, numPinReleUV, valpinReleUV, 'T', 'S', progUV);
+
 
 	if (SetupCorrecte == 0)
 	{

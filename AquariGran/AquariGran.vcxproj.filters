@@ -21,7 +21,7 @@
     <ClInclude Include="__vm\.AquariGran.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="configuracions.h">
+    <ClInclude Include="cPin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -31,7 +31,7 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="configuracions.cpp">
+    <ClCompile Include="cPin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
