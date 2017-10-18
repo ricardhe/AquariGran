@@ -5,9 +5,12 @@
 #include "RTClib.h"
 #include <SD.h>
 #include "cPin.h"
+#include "Eines.h"
 //#include <ArduinoJson.h>
 //#include <aJSON.h>
 
+
+Eines utils = Eines();
 
 //////////////////////////////////////////////////////////////// Variables LCD //////////////////////////////////////////////////////////////
 
@@ -227,19 +230,7 @@ void InverteixValorRele(int &valpinRele)
 		valpinRele = 1;
 }
 
-void EscriuPinDigital(int valPin, int numPin)
-{ 
-	if (valPin == 1)
-	{
-		Serial.println("HIGH");
-		digitalWrite(numPin, HIGH);
-	}
-	else
-	{
-		Serial.println("LOW");
-		digitalWrite(numPin, LOW);
-	}
-}
+
 
 void menuChangeEvent(MenuChangeEvent changed)
 {
@@ -307,7 +298,7 @@ void setup() {
 	EscriuPantalla();
 	Serial.println("Comencem navegació pel menú");
 
-	EscriuPinDigital(valpinReleSkimmer, numPinReleSkimmer);
+	utils.EscriuPinDigital(valpinReleSkimmer, numPinReleSkimmer);
 
 	if (!rtc.begin()) {
 		Serial.println(F("Couldn't find RTC"));

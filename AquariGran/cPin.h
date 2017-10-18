@@ -16,6 +16,9 @@ class cPin
 {
 
 private:
+
+	Eines utils = Eines();
+
 	char* nom;
 	int numPin;
 	int valPinDefecte;
@@ -24,6 +27,8 @@ private:
 	char tipusProgramacio;
 	programacioDiaria prgDiaria;
 	programacioSetmanal prgSetmanal;
+
+	void ExecutaConfiguracioInicial();
 
 public:
 	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio);

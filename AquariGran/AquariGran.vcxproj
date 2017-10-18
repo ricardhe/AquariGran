@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cPin.h" />
+    <ClInclude Include="Eines.h" />
     <ClInclude Include="__vm\.AquariGran.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cPin.cpp" />
+    <ClCompile Include="Eines.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -24,6 +24,9 @@
     <ClInclude Include="cPin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Eines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Codi Extern.txt">
@@ -32,6 +35,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cPin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Eines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
