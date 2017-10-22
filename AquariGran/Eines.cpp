@@ -1,18 +1,16 @@
+#include <Arduino.h>
 #include "Eines.h"
-
 
 
 Eines::Eines()
 {
 }
 
-
 Eines::~Eines()
 {
 }
 
-
-void EscriuPinDigital(int valPin, int numPin)
+void Eines::EscriuPinDigital(int valPin, int numPin)
 {
 
 	Serial.print("Num Pin: "); Serial.print(numPin);

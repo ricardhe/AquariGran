@@ -3,14 +3,12 @@
 #include <MenuBackend.h>   // ho he trobat aquí, hi ha exemples   https://forum.arduino.cc/index.php?topic=38053.0
 #include <Wire.h>
 #include "RTClib.h"
-#include <SD.h>
+//#include <SD.h>
 #include "cPin.h"
-#include "Eines.h"
-//#include <ArduinoJson.h>
-//#include <aJSON.h>
+//#include "Eines.h"
+#include "SDAcuari.h"
 
-
-Eines utils = Eines();
+//Eines utils = Eines();
 
 //////////////////////////////////////////////////////////////// Variables LCD //////////////////////////////////////////////////////////////
 
@@ -67,8 +65,8 @@ int valPush = 0; //valor pulsació Joystick
 		char* cntBombaCircuilacio1 = "Bomba Circ 1";
 		char* cntBombaCircuilacio2 = "Bomba Circ 2";
 		char* cntBombesPujada = "Bombes Pujada";
-		char* cntBombaSump = "Bomba Sump";
-		char* cntCalentador = "Calentador";
+		char* cntBombaSump =    "Bomba Sump";
+		char* cntCalentador =   "Calentador";
 		char* cntRefrigerador = "Refrigerador";
 		char* cntVentiladorAcuari = "Ventil. Acuari";
 		char* cntVentiladorInternSump = "Ventil. Sump";
@@ -162,6 +160,8 @@ cPin pinUV;
 	File myFile;
 	String nomfitxerConfig = "confPins.txt";
 
+	SDAcuari sdAcuari = SDAcuari(nomfitxerConfig);
+
 #pragma endregion
 
 /////////////////////////////////////////////////////////////// Variables Control //////////////////////////////////////////////////////////////
@@ -208,7 +208,7 @@ void menuUseEvent(MenuUseEvent used)
 
 		Serial.print("Valor Pin Skimmer : "); Serial.println(valpinReleSkimmer);
 
-		EscriuPinDigital(valpinReleSkimmer, pinReleSkimmer);
+		//utils.EscriuPinDigital(valpinReleSkimmer, numPinReleSkimmer);
 
 		if (valpinReleSkimmer == 1)
 		{
@@ -271,6 +271,11 @@ void printDate(DateTime date)
 }
 
 void setup() {
+	
+	Serial.begin(9600);
+
+	Serial.println(F("Comencem"));
+	
 
 	lcd.init();
 	lcd.backlight();
@@ -292,13 +297,13 @@ void setup() {
 	//pinMode(pinReleLlumRefugi, OUTPUT);
 	//pinMode(pinReleUV, OUTPUT);
 
-	Serial.begin(9600);
+
 
 	menuSetup();
 	EscriuPantalla();
-	Serial.println("Comencem navegació pel menú");
+	Serial.println(F("Comencem navegació pel menú"));
 
-	utils.EscriuPinDigital(valpinReleSkimmer, numPinReleSkimmer);
+	//utils.EscriuPinDigital(valpinReleSkimmer, numPinReleSkimmer);
 
 	if (!rtc.begin()) {
 		Serial.println(F("Couldn't find RTC"));
@@ -306,10 +311,18 @@ void setup() {
 		ErrorSetup = "Couldn't find RTC";
 	}
 
-	if (!SD.begin(4)) {
-		Serial.println("SD Incorrecte");
+	//if (!SD.begin(4)) {
+	//	Serial.println(F("SD Incorrecte"));
+	//	SetupCorrecte = 0;
+	//	ErrorSetup = "SD Incorrecte";
+	//	return;
+	//}
+	
+	if (!sdAcuari.carregaConfiguracio())
+	{
+		Serial.println(F("Fitx Config Error"));
 		SetupCorrecte = 0;
-		ErrorSetup = "SD Incorrecte";
+		ErrorSetup = "Fitx Config Error";
 		return;
 	}
 
@@ -322,15 +335,18 @@ void setup() {
 		// rtc.adjust(DateTime(2016, 1, 21, 3, 0, 0));
 	}
 
-	pinSkimmer = cPin(cntSkimmer, numPinReleSkimmer, valpinReleSkimmer, 'O', 'A');
-	
-	programacioDiaria progBombaSump = { -1, { {1000,1015},{1100,1130} } };
-	pinBombaSump = cPin(cntBombaSump,  numPinReleBombaSump, valpinReleBombaSump, 'T', 'D', progBombaSump);
+	//sdAcuari.carregaConfiguracio();
 
-	programacioDiaria progUVDilluns = { 1,{ { 1000,1015 },{ 1100,1130 } } };
-	programacioDiaria progUVDimarts = { 2,{ { 1000,1015 },{ 1100,1130 } } };
-	programacioSetmanal progUV = { progUVDilluns, progUVDimarts };
-	pinUV = cPin(cntUV, numPinReleUV, valpinReleUV, 'T', 'S', progUV);
+	pinSkimmer = cPin(cntSkimmer, numPinReleSkimmer, valpinReleSkimmer, 'O', 'A', sdAcuari);
+	//
+	//programacioDiaria progBombaSump = { -1, { {1000,1015},{1100,1130} } };
+	//pinBombaSump = cPin(cntBombaSump,  numPinReleBombaSump, valpinReleBombaSump, 'T', 'D', progBombaSump);
+
+	//programacioDiaria progUVDilluns = { 1,{ { 1000,1015 },{ 1100,1130 } } };
+	//programacioDiaria progUVDimarts = { 2,{ { 1000,1015 },{ 1100,1130 } } };
+	//programacioSetmanal progUV = { progUVDilluns, progUVDimarts };
+	//pinUV = cPin(cntUV, numPinReleUV, valpinReleUV, 'T', 'S', progUV);
+	pinLlumRefugi = cPin(cntLlumRefugi, numPinReleLlumRefugi, valpinReleLlumRefugi, 'T', 'A', sdAcuari);
 
 
 	if (SetupCorrecte == 0)

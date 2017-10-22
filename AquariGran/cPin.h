@@ -1,15 +1,18 @@
 #pragma once
 
+//#include "Eines.h"
+#include "SDAcuari.h";
+
 struct programacioDiaria
 {
 	int diaDeLaSetmana;
 	//int intervalsDiaris[12][12];
-	int intervalsDiaris[20][2];
+	int *intervalsDiaris;
 };
 
 struct programacioSetmanal
 {
-	programacioDiaria dies[7];
+	programacioDiaria *dies;
 };
 
 class cPin
@@ -17,7 +20,7 @@ class cPin
 
 private:
 
-	Eines utils = Eines();
+	//Eines utils = Eines();
 
 	char* nom;
 	int numPin;
@@ -27,13 +30,15 @@ private:
 	char tipusProgramacio;
 	programacioDiaria prgDiaria;
 	programacioSetmanal prgSetmanal;
+	SDAcuari *sd;
 
 	void ExecutaConfiguracioInicial();
 
 public:
-	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio);
-	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, programacioDiaria pProgDiaria);
-	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, programacioSetmanal pProgDiaria);
+	cPin();
+	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, SDAcuari &psd);
+	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, programacioDiaria pProgDiaria, SDAcuari &psd);
+	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, programacioSetmanal pProgDiaria, SDAcuari &psd);
 	~cPin();
 };
 
