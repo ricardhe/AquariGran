@@ -1,162 +1,78 @@
 ﻿#include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
-#include <MenuBackend.h>   // ho he trobat aquí, hi ha exemples   https://forum.arduino.cc/index.php?topic=38053.0
+//#include <MenuBackend.h>   // ho he trobat aquí, hi ha exemples   https://forum.arduino.cc/index.php?topic=38053.0
+
+#include <MenuBackend.h>
+
 #include <Wire.h>
 #include "RTClib.h"
-//#include <SD.h>
 #include "cPin.h"
-//#include "Eines.h"
 #include "SDAcuari.h"
+#include "ControlAplicacio.h"
 
-//Eines utils = Eines();
+	Eines utils = Eines();
+
+	const char ObertPerDefecte = 'O';
+	const char TancatPerDefecte = 'T';
+	const char TipusProgramacioDiaria = 'D';
+	const char TipusProgramacioSetmanal = 'S';
+	const char TipusProgramacioSempreObert = 'A';
+
+	char* operEstat = "Estat";
+	char* oper10Min = "oper10Min";
+	char* oper30Min = "oper30Min";
+	char* oper1Hora = "oper1Hora";
 
 //////////////////////////////////////////////////////////////// Variables LCD //////////////////////////////////////////////////////////////
 
-LiquidCrystal_I2C lcd(0x3F, 16, 2);  //Atenció la nostre fa servir la 0x3F per defecte sol ser 0x27 !!!
-byte rodoneta[8] = {
-	B00000,
-	B01100,
-	B11110,
-	B01100,
-	B00000,
-	B00000,
-	B00000,
-};
+	LiquidCrystal_I2C lcd(0x3F, 16, 2);  //Atenció la nostre fa servir la 0x3F per defecte sol ser 0x27 !!!
+
+	LCDAcuari lcdAcuari = LCDAcuari(lcd);
+
+	byte rodoneta[8] = {
+		B00000,
+		B01100,
+		B11110,
+		B01100,
+		B00000,
+		B00000,
+		B00000,
+	};
+
+	byte Punter[8] = {
+		B00000,
+		B00000,
+		B11111,
+		B11111,
+		B00000,
+		B00000,
+		B00000,
+	};
 
 //////////////////////////////////////////////////////////////// Variables Joystick //////////////////////////////////////////////////////////////
-int joyPinX = A1; // X Axis Joytick
-int joyPinY = A2; // Y Axis Joytick
-int joyPush = 5; // botó de pulsació
-int valueY = 0; // variable per Y Axis
-int valueX = 0; // variable per X Axis
-int valPush = 0; //valor pulsació Joystick
-
-//////////////////////////////////////////////////////////////// Variables Menús //////////////////////////////////////////////////////////////
-
-#pragma region Variables Menús
+	
+	int joyPinX = A1; // X Axis Joytick
+	int joyPinY = A2; // Y Axis Joytick
+	int joyPush = 5; // botó de pulsació
+	int valueY = 0; // variable per Y Axis
+	int valueX = 0; // variable per X Axis
+	int valPush = 0; //valor pulsació Joystick
 
 
-		/*
-			Root
-
-			Estat Relés
-					Skimmer
-					Bomba Circulació 1
-					Bomba Circulació 2
-					Bombes Pujada
-					Bomba Sump
-					Calentador
-					Refrigerador
-					Ventilador Acuari
-					Ventilador Intern Sump
-					Llum Refugi
-					UV
-
-			Accions
-					Donar de Menjar
-					Parar Circulació
-					Canvi d'Aigua
-
-		*/
-
-		const char cntEstatReles[] = "Estat Reles";
-
-		char* cntSkimmer = "Skimmer";
-		char* cntBombaCircuilacio1 = "Bomba Circ 1";
-		char* cntBombaCircuilacio2 = "Bomba Circ 2";
-		char* cntBombesPujada = "Bombes Pujada";
-		char* cntBombaSump =    "Bomba Sump";
-		char* cntCalentador =   "Calentador";
-		char* cntRefrigerador = "Refrigerador";
-		char* cntVentiladorAcuari = "Ventil. Acuari";
-		char* cntVentiladorInternSump = "Ventil. Sump";
-		char* cntLlumRefugi = "Llum Refugi";
-		char* cntUV = "UV";
-		char* cntAccions = "Accions";
-		char* cntDonardeMenjar = "Donar de Menjar";
-		char* cntPararCirculacio = "Parar Circulació";
-		char* cntCanviAigua = "Canvi dAigua";
-
-
-		//this controls the menu backend and the event generation
-		MenuBackend menu = MenuBackend(menuUseEvent, menuChangeEvent);
-		MenuItem mRoot = MenuItem("Root");
-		MenuItem mEstatReles = MenuItem(cntEstatReles);
-		MenuItem mSkimmer = MenuItem(cntSkimmer);
-		MenuItem mBombaCircuilacio1 = MenuItem(cntBombaCircuilacio1);
-		MenuItem mBombaCircuilacio2 = MenuItem(cntBombaCircuilacio2);
-		MenuItem mBombesPujada = MenuItem(cntBombesPujada);
-		MenuItem mBombaSump = MenuItem(cntBombaSump);
-		MenuItem mCalentador = MenuItem(cntCalentador);
-		MenuItem mRefrigerador = MenuItem(cntRefrigerador);;
-		MenuItem mVentiladorAcuari = MenuItem(cntVentiladorAcuari);
-		MenuItem mVentiladorInternSump = MenuItem(cntVentiladorInternSump);
-		MenuItem mLlumRefugi = MenuItem(cntLlumRefugi);
-		MenuItem mUV = MenuItem(cntUV);
-		MenuItem mAccions = MenuItem(cntAccions);
-		MenuItem mDonardeMenjar = MenuItem(cntDonardeMenjar);
-		MenuItem mPararCirculacio = MenuItem(cntPararCirculacio);
-		MenuItem mCanviAigua = MenuItem(cntCanviAigua);
-
-
-#pragma endregion
-
-//////////////////////////////////////////////////////////////// Variables Relés //////////////////////////////////////////////////////////////
-#pragma region Variables Reles
-
-int numPinReleSkimmer = 3;
-int numPinReleBombaCirc1 = 6;
-int numPinReleBombaCirc2 = 2;
-int numPinReleBombesPujada = 2;
-int numPinReleBombaSump = 2;
-int numPinReleCalentador = 2;
-int numPinReleRefrigerador = 2;
-int numPinReleVentiladorAcuari = 2;
-int numPinRelemVentiladorInternSump = 2;
-int numPinReleLlumRefugi = 2;
-int numPinReleUV = 2;
-
-int valpinReleSkimmer = 1;
-int valpinReleBombaCirc1 = 1;
-int valpinReleBombaCirc2 = 1;
-int valpinReleBombesPujada = 1;
-int valpinReleBombaSump = 1;
-int valpinReleCalentador = 0;
-int valpinReleRefrigerador = 0;
-int valpinReleVentiladorAcuari = 0;
-int valpinRelemVentiladorInternSump = 0;
-int valpinReleLlumRefugi = 0;
-int valpinReleUV = 0;
-
-cPin pinSkimmer ;
-cPin pinBombaCirc1 ;
-cPin pinBombaCirc2 ;
-cPin pinBombesPujada ;
-cPin pinBombaSump ;
-cPin pinCalentador ;
-cPin pinRefrigerador ;
-cPin pinVentiladorAcuari ;
-cPin pinVentiladorInternSump ;
-cPin pinLlumRefugi ;
-cPin pinUV;
-
-#pragma endregion
-
-//////////////////////////////////////////////////////////////// Variables Rellotges //////////////////////////////////////////////////////////////
+					 //////////////////////////////////////////////////////////////// Variables Rellotges //////////////////////////////////////////////////////////////
 #pragma region Rellotges
 
 	RTC_DS3231 rtc;
-	String daysOfTheWeek[7] = { "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" };
-	String monthsNames[12] = { "Enero", "Febrero", "Marzo", "Abril", "Mayo",  "Junio", "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre" };
-
+	String daysOfTheWeek[7] = { "Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte" };
+	String monthsNames[12] = { "Gener", "Febrer", "Marc", "Abril", "Maig",  "Juny", "Juliol","Agost","Septembre","Octubre","Novembre","Desembre" };
 
 #pragma endregion
 
 
-//////////////////////////////////////////////////////////////// Variables Micro SD Card //////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////// Variables Micro SD Card //////////////////////////////////////////////////////////////
 
 #pragma region SD Card
-	
+
 	File myFile;
 	String nomfitxerConfig = "confPins.txt";
 
@@ -164,82 +80,310 @@ cPin pinUV;
 
 #pragma endregion
 
-/////////////////////////////////////////////////////////////// Variables Control //////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////// Variables Control //////////////////////////////////////////////////////////////
 #pragma region Control
 
 	int SetupCorrecte = 1;
 	String ErrorSetup = "";
 
+	//bool algunMenuTeElControl = false;
+
+	ControlAplicacio  control = ControlAplicacio();
+
+	//control.algunMenuTeElControl = false;
+
+
+	cPin* PinAmbControl;
+
 #pragma endregion
 
+//////////////////////////////////////////////////////////////// Variables Menús //////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////// Variables Json Parser //////////////////////////////////////////////////////////////
-#pragma region Json Parser
+#pragma region Variables Menús
+	/*
+		Root
+
+		Estat Relés
+				Skimmer
+				Bomba Circulació 1
+				Bomba Circulació 2
+				Bombes Pujada
+				Bomba Sump
+				Calentador
+				Refrigerador
+				Ventilador Acuari
+				Ventilador Intern Sump
+				Llum Refugi
+				UV
+
+		Accions
+				Donar de Menjar
+				Parar Circulació
+				Canvi d'Aigua
+	*/
+
+	const char cntEstatReles[] = "Estat Reles";
+
+	char* cntSkimmer = "Skimmer";
+	char* cntBombaCircuilacio1 = "Bomba Circ 1";
+	char* cntBombaCircuilacio2 = "Bomba Circ 2";
+	char* cntBombesPujada = "Bombes Pujada";
+	char* cntBombaSump =    "Bomba Sump";
+	char* cntCalentador =   "Calentador";
+	char* cntRefrigerador = "Refrigerador";
+	char* cntVentiladorAcuari = "Ventil. Acuari";
+	char* cntVentiladorInternSump = "Ventil. Sump";
+	char* cntLlumRefugi = "Llum Refugi";
+	char* cntUV = "UV";
+	char* cntAccions = "Accions";
+	char* cntDonardeMenjar = "Donar de Menjar";
+	char* cntPararCirculacio = "Parar Circulació";
+	char* cntCanviAigua = "Canvi dAigua";
+
+	//this controls the menu backend and the event generation
+	MenuBackend menu = MenuBackend(menuUseEvent, menuChangeEvent);
+	MenuItem mRoot = MenuItem("Root", 'A');
+	MenuItem mEstatReles = MenuItem(cntEstatReles,'B');
+	MenuItem mSkimmer = MenuItem(cntSkimmer, 'C');
+	MenuItem mBombaCircuilacio1 = MenuItem(cntBombaCircuilacio1, 'D');
+	MenuItem mBombaCircuilacio2 = MenuItem(cntBombaCircuilacio2, 'E');
+	MenuItem mBombesPujada = MenuItem(cntBombesPujada, 'F');
+	MenuItem mBombaSump = MenuItem(cntBombaSump, 'G');
+	MenuItem mCalentador = MenuItem(cntCalentador, 'H');
+	MenuItem mRefrigerador = MenuItem(cntRefrigerador, 'I');
+	MenuItem mVentiladorAcuari = MenuItem(cntVentiladorAcuari, 'J');
+	MenuItem mVentiladorInternSump = MenuItem(cntVentiladorInternSump, 'K');
+	MenuItem mLlumRefugi = MenuItem(cntLlumRefugi, 'L');
+	MenuItem mUV = MenuItem(cntUV, 'M');
+	MenuItem mAccions = MenuItem(cntAccions, 'N');
+	MenuItem mDonardeMenjar = MenuItem(cntDonardeMenjar, 'O');
+	MenuItem mPararCirculacio = MenuItem(cntPararCirculacio, 'P');
+	MenuItem mCanviAigua = MenuItem(cntCanviAigua, 'Q');
+
+	subMenu sbmEstat = { "Estat",   operEstat };
+	subMenu sbm10Min = { "P. 10 min",  oper10Min };
+	subMenu sbm30Min = { "P. 30 min",  oper30Min };
+	subMenu sbm1Hora = { "P. 1 hora",  oper1Hora };
+
+	subMenu menusSkimmer[4] = { sbmEstat ,sbm10Min ,sbm30Min ,sbm1Hora };
+
 
 #pragma endregion
 
+//////////////////////////////////////////////////////////////// Variables Relés //////////////////////////////////////////////////////////////
+#pragma region Variables Reles
 
+	int numPinReleSkimmer = 31;
+	int numPinReleBombaCirc1 = 33;
+	int numPinReleBombaCirc2 = 35;
+	int numPinReleBombesPujada = 37;
+	int numPinReleBombaSump = 39;
+	int numPinReleCalentador = 41;
+	int numPinReleRefrigerador = 43;
+	int numPinReleVentiladorAcuari = 45;
+	int numPinRelemVentiladorInternSump = 2;
+	int numPinReleLlumRefugi = 2;
+	int numPinReleUV = 2;
 
-void menuSetup()
-{
-	Serial.println("Configurant Menú...");
+	int valpinReleSkimmer = 1;
+	int valpinReleBombaCirc1 = 1;
+	int valpinReleBombaCirc2 = 1;
+	int valpinReleBombesPujada = 1;
+	int valpinReleBombaSump = 1;
+	int valpinReleCalentador = 0;
+	int valpinReleRefrigerador = 0;
+	int valpinReleVentiladorAcuari = 0;
+	int valpinRelemVentiladorInternSump = 0;
+	int valpinReleLlumRefugi = 0;
+	int valpinReleUV = 0;
 
-	mEstatReles.addRight(mSkimmer).addRight(mBombaCircuilacio1).addRight(mBombaCircuilacio2).addRight(mBombesPujada).addRight(mBombaSump).addRight(mCalentador).addRight(mRefrigerador).addRight(mVentiladorAcuari).addRight(mVentiladorInternSump).addRight(mLlumRefugi).addRight(mUV);
-	mAccions.addRight(mDonardeMenjar).addRight(mPararCirculacio).addRight(mCanviAigua);
+	cPin pinSkimmer ;
+	cPin pinBombaCirc1 ;
+	cPin pinBombaCirc2 ;
+	cPin pinBombesPujada ;
+	cPin pinBombaSump ;
+	cPin pinCalentador ;
+	cPin pinRefrigerador ;
+	cPin pinVentiladorAcuari ;
+	cPin pinVentiladorInternSump ;
+	cPin pinLlumRefugi ;
+	cPin pinUV;
 
-	menu.getRoot().add(mEstatReles).add(mAccions);
-}
-
-void menuUseEvent(MenuUseEvent used)
-{
-	Serial.print("Menu use ");
-	Serial.println(used.item.getName());
-
-	if (used.item.getName() == cntSkimmer) //comparison using a string literal
+	void ExecutaVoltaPins()
 	{
-		Serial.println("menuUseEvent found Skimmer");
-
-		//if (valpinReleSkimmer == 1)
-		//	valpinReleSkimmer = 0;
-		//else
-		//	valpinReleSkimmer = 1;
-
-		InverteixValorRele(valpinReleSkimmer);
-
-		Serial.print("Valor Pin Skimmer : "); Serial.println(valpinReleSkimmer);
-
-		//utils.EscriuPinDigital(valpinReleSkimmer, numPinReleSkimmer);
-
-		if (valpinReleSkimmer == 1)
-		{
-			Print2Line("Activat");
-		}
-		else
-		{
-			Print2Line("Desactivat");
-		}
+		pinSkimmer.executemVolta();
+		pinBombaCirc1.executemVolta();
+		pinBombaCirc2.executemVolta();
+		pinBombesPujada.executemVolta();
+		pinBombaSump.executemVolta();
+		pinCalentador.executemVolta();
+		pinRefrigerador.executemVolta();
+		pinVentiladorAcuari.executemVolta();
+		pinVentiladorInternSump.executemVolta();
+		pinLlumRefugi.executemVolta();
+		pinUV.executemVolta();
 	}
 
-}
+	void ConfigurarPins()
+	{
 
-void InverteixValorRele(int &valpinRele)
-{
-	if (valpinRele == 1)
-		valpinRele = 0;
-	else
-		valpinRele = 1;
-}
+#pragma region Skimmer
+
+		pinSkimmer = cPin(cntSkimmer, numPinReleSkimmer, valpinReleSkimmer, ObertPerDefecte, TipusProgramacioSempreObert, menusSkimmer, 4, sdAcuari, utils, lcdAcuari);
+
+#pragma endregion
+
+		//#pragma region BombaCirculacio1
+
+		//	pinBombaCirc1 = cPin(cntBombaCircuilacio1,  numPinReleBombaCirc1, valpinReleBombaCirc1, ObertPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
+
+		//#pragma endregion
+
+		//#pragma region BombaCirculacio2
+
+		//	pinBombaCirc2 = cPin(cntBombaCircuilacio2, numPinReleBombaCirc2, valpinReleBombaCirc2, ObertPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
+
+		//#pragma endregion
+
+		//#pragma region BombesPujada
+
+		//	pinBombesPujada = cPin(cntBombesPujada, numPinReleBombesPujada, valpinReleBombesPujada, ObertPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
+
+		//#pragma endregion
+
+		//#pragma region BombaSump
+
+		//	programacioDiaria progBombaSump;
+		//	interval ibSump1 = { "0730", "0900" };
+		//	interval ibSump2 = { "1300", "1500" };
+		//	interval ibSump3 = { "1900", "2100" };
+		//	interval ibSump4 = { "0010", "0400" };
+		//	interval intervelsBombaSump[4] = { ibSump1, ibSump2, ibSump3, ibSump4 };
+
+		//	progBombaSump.intervalsDiaris = intervelsBombaSump;
+		//	progBombaSump.numIntervals = 4;
+		//	progBombaSump.diaDeLaSetmana = -1;
+
+		//	pinBombaSump = cPin(cntBombaSump, numPinReleBombaSump, valpinReleBombaSump, TancatPerDefecte, TipusProgramacioDiaria, progBombaSump, sdAcuari, utils, lcdAcuari);
+
+		//#pragma endregion
+
+		//#pragma region Calentador
+
+		//	pinCalentador = cPin(cntCalentador, numPinReleCalentador, valpinReleCalentador, TancatPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
+
+		//#pragma endregion
+
+		//#pragma region Refrigerador
+
+		//	pinRefrigerador = cPin(cntRefrigerador, numPinReleRefrigerador, valpinReleRefrigerador, TancatPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
+
+		//#pragma endregion
+
+		//#pragma region Ventilador Acuari
+
+		//	 pinVentiladorAcuari = cPin(cntVentiladorAcuari, numPinReleVentiladorAcuari, valpinReleVentiladorAcuari, TancatPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
+
+		//#pragma endregion
+
+		//#pragma region VentiladorInternSump
+
+		//	 pinVentiladorInternSump = cPin(cntVentiladorInternSump, numPinRelemVentiladorInternSump, valpinRelemVentiladorInternSump, TancatPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
+
+		//#pragma endregion
+
+		//#pragma region Llum Refugi
+
+		//	 programacioDiaria progLlumRefugi;
+		//	 interval ibLlumRefugi1 = { "0730", "0900" };
+		//	 interval intervelsLlumRefugi[1] = { ibLlumRefugi1 };
+
+		//	 progLlumRefugi.intervalsDiaris = intervelsLlumRefugi;
+		//	 progLlumRefugi.numIntervals = 1;
+		//	 progLlumRefugi.diaDeLaSetmana = -1;
+
+		//	 pinLlumRefugi = cPin(cntLlumRefugi, numPinReleLlumRefugi, valpinReleLlumRefugi, TancatPerDefecte, TipusProgramacioDiaria, progLlumRefugi, sdAcuari, utils, lcdAcuari);
+
+		//#pragma endregion
+
+		//#pragma region UV
+
+		//	 programacioDiaria progDillunsUV;
+		//	 interval ibDillunsUV1 = { "00:05", "0900" };
+		//	 interval intervelsDillunsUV[1] = { ibDillunsUV1 };
+
+		//	 progDillunsUV.intervalsDiaris = intervelsDillunsUV;
+		//	 progDillunsUV.numIntervals = 1;
+		//	 progDillunsUV.diaDeLaSetmana = 1;
+
+
+		//	 programacioDiaria progDivendresUV;
+		//	 interval ibDivendresUV1 = { "00:05", "0900" };
+		//	 interval intervelsDivendresUV[1] = { ibDivendresUV1 };
+
+		//	 progDivendresUV.intervalsDiaris = intervelsDivendresUV;
+		//	 progDivendresUV.numIntervals = 1;
+		//	 progDivendresUV.diaDeLaSetmana = 5;
+
+		//	 programacioDiaria diesUV[2] = { progDillunsUV ,  progDivendresUV };
+
+		//	 programacioSetmanal progSemUV;
+		// 
+		//	 progSemUV.dies = diesUV;
+
+		//	 pinUV = cPin(cntUV, numPinReleUV, valpinReleUV, TancatPerDefecte, TipusProgramacioSetmanal, progSemUV, sdAcuari, utils, lcdAcuari);
+
+		//#pragma endregion
+
+	}
+
+
+#pragma endregion
 
 
 
-void menuChangeEvent(MenuChangeEvent changed)
-{
-	Serial.print("Menu change ");
-	Serial.print(changed.from.getName());
-	
-	Serial.print(" ");
-	Serial.println(changed.to.getName());
-}
+
+	void menuSetup()
+	{
+		Serial.println(F("Config Menú..."));
+
+		mEstatReles.addRight(mSkimmer).addRight(mBombaCircuilacio1).addRight(mBombaCircuilacio2).addRight(mBombesPujada).addRight(mBombaSump).addRight(mCalentador).addRight(mRefrigerador).addRight(mVentiladorAcuari).addRight(mVentiladorInternSump).addRight(mLlumRefugi).addRight(mUV);
+		mAccions.addRight(mDonardeMenjar).addRight(mPararCirculacio).addRight(mCanviAigua);
+
+		menu.getRoot().add(mEstatReles).add(mAccions);
+	}
+
+	void menuUseEvent(MenuUseEvent used)
+	{
+
+		Serial.print(F("Menu use "));
+		Serial.println(used.item.getName());
+
+		if (used.item.getName() == cntSkimmer) //comparison using a string literal
+		{
+
+			Serial.println(F("menuUseEvent found Skimmer"));
+			pinSkimmer.agafaElControl(control, used.item.getShortkey(), rtc); //menu, used.item.getShortkey()		
+			PinAmbControl = &pinSkimmer;
+
+			//algunMenuTeElControl = true;
+			//used.item.getShortkey();
+			//pinSkimmer.setValorInvertit();
+			//pinSkimmer.indicaStatusActivacioLCD();
+
+		}
+
+	}
+
+	void menuChangeEvent(MenuChangeEvent changed)
+	{
+		Serial.print(F("Menu change "));
+		Serial.print(changed.from.getName());
+
+		Serial.print(" ");
+		Serial.println(changed.to.getName());
+	}
+
 
 int TransformaValorJoystick(int val) //transformem en un valor discret el valor del joystick
 {
@@ -252,77 +396,41 @@ int TransformaValorJoystick(int val) //transformem en un valor discret el valor 
 		return -1;
 }
 
-void printDate(DateTime date)
-{
-	Serial.print(date.year(), DEC);
-	Serial.print('/');
-	Serial.print(date.month(), DEC);
-	Serial.print('/');
-	Serial.print(date.day(), DEC);
-	Serial.print(" (");
-	Serial.print(daysOfTheWeek[date.dayOfTheWeek()]);
-	Serial.print(") ");
-	Serial.print(date.hour(), DEC);
-	Serial.print(':');
-	Serial.print(date.minute(), DEC);
-	Serial.print(':');
-	Serial.print(date.second(), DEC);
-	Serial.println();
-}
-
 void setup() {
 	
 	Serial.begin(9600);
 
-	Serial.println(F("Comencem"));
+	Serial.println(F("Ini"));
 	
 
 	lcd.init();
 	lcd.backlight();
 	lcd.createChar(0, rodoneta);
 
+	lcd.createChar(1, Punter);
+
 	pinMode(joyPinX, INPUT);
 	pinMode(joyPinY, INPUT);
 	pinMode(joyPush, INPUT_PULLUP);
 
-	//pinMode(pinReleSkimmer, OUTPUT);
-	//pinMode(pinReleBombaCirc1, OUTPUT);
-	//pinMode(pinReleBombaCirc2, OUTPUT);
-	//pinMode(pinReleBombesPujada, OUTPUT);
-	//pinMode(pinReleBombaSump, OUTPUT);
-	//pinMode(pinReleCalentador, OUTPUT);
-	//pinMode(pinReleRefrigerador, OUTPUT);
-	//pinMode(pinReleVentiladorAcuari, OUTPUT);
-	//pinMode(pinRelemVentiladorInternSump, OUTPUT);
-	//pinMode(pinReleLlumRefugi, OUTPUT);
-	//pinMode(pinReleUV, OUTPUT);
-
-
 
 	menuSetup();
 	EscriuPantalla();
-	Serial.println(F("Comencem navegació pel menú"));
+	Serial.println(F("Ini Nav menú"));
 
 	//utils.EscriuPinDigital(valpinReleSkimmer, numPinReleSkimmer);
 
 	if (!rtc.begin()) {
-		Serial.println(F("Couldn't find RTC"));
+		Serial.println(F("RTC Not F"));
 		SetupCorrecte = 0;
-		ErrorSetup = "Couldn't find RTC";
+		ErrorSetup = F("RTC Not F");
 	}
-
-	//if (!SD.begin(4)) {
-	//	Serial.println(F("SD Incorrecte"));
-	//	SetupCorrecte = 0;
-	//	ErrorSetup = "SD Incorrecte";
-	//	return;
-	//}
 	
-	if (!sdAcuari.carregaConfiguracio())
+	if (!sdAcuari.carregaConfiguracio(true))
 	{
 		Serial.println(F("Fitx Config Error"));
 		SetupCorrecte = 0;
-		ErrorSetup = "Fitx Config Error";
+		ErrorSetup = F("Fitx Config Error");
 		return;
 	}
 
@@ -335,19 +443,7 @@ void setup() {
 		// rtc.adjust(DateTime(2016, 1, 21, 3, 0, 0));
 	}
 
-	//sdAcuari.carregaConfiguracio();
-
-	pinSkimmer = cPin(cntSkimmer, numPinReleSkimmer, valpinReleSkimmer, 'O', 'A', sdAcuari);
-	//
-	//programacioDiaria progBombaSump = { -1, { {1000,1015},{1100,1130} } };
-	//pinBombaSump = cPin(cntBombaSump,  numPinReleBombaSump, valpinReleBombaSump, 'T', 'D', progBombaSump);
-
-	//programacioDiaria progUVDilluns = { 1,{ { 1000,1015 },{ 1100,1130 } } };
-	//programacioDiaria progUVDimarts = { 2,{ { 1000,1015 },{ 1100,1130 } } };
-	//programacioSetmanal progUV = { progUVDilluns, progUVDimarts };
-	//pinUV = cPin(cntUV, numPinReleUV, valpinReleUV, 'T', 'S', progUV);
-	pinLlumRefugi = cPin(cntLlumRefugi, numPinReleLlumRefugi, valpinReleLlumRefugi, 'T', 'A', sdAcuari);
-
+	ConfigurarPins();
 
 	if (SetupCorrecte == 0)
 	{
@@ -355,17 +451,20 @@ void setup() {
 		lcd.clear();
 		lcd.setCursor(0, 0);
 		lcd.println(ErrorSetup);
-
 	}
+
+
 
 }
 
+
 void loop() {
 	
+	byte tempsDelay = 75;
 	
 	if (SetupCorrecte == 0) // si el setup ha anat malament no fem res.
 	{
-		Serial.println("dins Setup Incorrecte");
+		Serial.println(F(" Setup Incorrecte"));
 		Serial.println(ErrorSetup);
 		lcd.clear();
 		lcd.setCursor(0, 0);
@@ -376,13 +475,22 @@ void loop() {
 	else
 	{
 		DateTime now = rtc.now();
-		//printDate(now);
+
 
 		if (!digitalRead(joyPush)) // si apreta el botó del mig del joystick
 		{
-			Serial.println("Hem apretat");
-			menu.use();
-			delay(100);
+
+			if (control.algunMenuTeElControl)
+			{
+				PinAmbControl->executaSubMenu();
+			}
+			else
+			{
+				Serial.println(F("Click"));
+				menu.use();
+				delay(tempsDelay);
+			}
+			
 		}
 		else
 		{
@@ -390,36 +498,74 @@ void loop() {
 			valueX = TransformaValorJoystick(analogRead(joyPinX));
 			if (valueX == 0)  // valueX pot ser 1 o 0, si és -1 no fer res.
 			{
-				menu.moveRight();
-				EscriuPantalla();
-				delay(100);
+
+				if (control.algunMenuTeElControl)
+				{
+
+				}
+				else
+				{
+					menu.moveRight();
+					EscriuPantalla();
+					delay(tempsDelay);
+				}
+
 			}
 			else if (valueX == 1)
 			{
-				menu.moveLeft();
-				EscriuPantalla();
-				delay(100);
+
+				if (control.algunMenuTeElControl)
+				{
+
+				}
+				else
+				{
+					menu.moveLeft();
+					EscriuPantalla();
+					delay(tempsDelay);
+				}
+
 			}
 
 			valueY = TransformaValorJoystick(analogRead(joyPinY));
 			if (valueY == 0)  // valueY pot ser 1 o 0, si és -1 no fer res.
 			{
-				menu.moveDown();
-				EscriuPantalla();
-				delay(100);
+
+				if (control.algunMenuTeElControl)
+				{
+					PinAmbControl->avancaSubmenu();
+				}
+				else
+				{
+					menu.moveDown();
+					EscriuPantalla();
+					delay(tempsDelay);
+				}
+
 			}
 			else if (valueY == 1)
 			{
-				menu.moveUp();
-				EscriuPantalla();
-				delay(100);
+
+				if (control.algunMenuTeElControl)
+				{
+					PinAmbControl->retrocedeixSubMenu();
+				}
+				else
+				{
+					menu.moveUp();
+					EscriuPantalla();
+					delay(tempsDelay);
+				}
+
 			}
 
 		}
 
+		ExecutaVoltaPins();
+
 	}
 
-	delay(100);
+	delay(tempsDelay);
 
 }
 
@@ -440,24 +586,13 @@ void EscriuPantalla()
 	{
 		if (menu.getCurrent().getName() == "Skimmer")
 		{
-			if (valpinReleSkimmer == 1)
-			{
-				Print2Line("Activat      ");
-			}
-			else
-			{
-				Print2Line("Desactivat   ");
-			}
+			pinSkimmer.indicaStatusActivacioLCD(2);
 		}
 
 	}
 }
 
-void Print2Line(char* val)
-{
-	lcd.setCursor(2, 1);
-	lcd.print(val);
-}
+
 
 
 //void EscriuSubApartatPantalla()
@@ -483,3 +618,20 @@ void Print2Line(char* val)
 //
 //}
 
+//void printDate(DateTime date)
+//{
+//	Serial.print(date.year(), DEC);
+//	Serial.print('/');
+//	Serial.print(date.month(), DEC);
+//	Serial.print('/');
+//	Serial.print(date.day(), DEC);
+//	Serial.print(" (");
+//	Serial.print(daysOfTheWeek[date.dayOfTheWeek()]);
+//	Serial.print(") ");
+//	Serial.print(date.hour(), DEC);
+//	Serial.print(':');
+//	Serial.print(date.minute(), DEC);
+//	Serial.print(':');
+//	Serial.print(date.second(), DEC);
+//	Serial.println();
+//}

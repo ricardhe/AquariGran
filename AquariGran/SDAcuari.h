@@ -9,17 +9,18 @@ private:
 
 	String nomFitxerConfig;
 	String contingutConfiguracio;
+	int getPosicioValorVariable(String var);
 
 public:
 
 	
 	String getConfiguracio();
 
-	bool carregaConfiguracio();
-	bool saveConfiguracio();
+	bool carregaConfiguracio(bool initSD);
 
 	int getIntValueConfig(String var);
 
+	bool saveValueConfig(int value, String var);
 
 	SDAcuari(String pnomFitxerConfig);
 	~SDAcuari();

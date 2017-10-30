@@ -450,3 +450,22 @@ int leeJoystick(){
 		file.readBytes(buffer, maxSize);
 		file.close();
 	}
+
+	//pinMode(pinReleSkimmer, OUTPUT);
+	//pinMode(pinReleBombaCirc1, OUTPUT);
+	//pinMode(pinReleBombaCirc2, OUTPUT);
+	//pinMode(pinReleBombesPujada, OUTPUT);
+	//pinMode(pinReleBombaSump, OUTPUT);
+	//pinMode(pinReleCalentador, OUTPUT);
+	//pinMode(pinReleRefrigerador, OUTPUT);
+	//pinMode(pinReleVentiladorAcuari, OUTPUT);
+	//pinMode(pinRelemVentiladorInternSump, OUTPUT);
+	//pinMode(pinReleLlumRefugi, OUTPUT);
+	//pinMode(pinReleUV, OUTPUT);
+
+	//if (!SD.begin(4)) {
+	//	Serial.println(F("SD Incorrecte"));
+	//	SetupCorrecte = 0;
+	//	ErrorSetup = "SD Incorrecte";
+	//	return;
+	//}

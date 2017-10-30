@@ -1,21 +1,25 @@
 #include "SDAcuari.h"
 
 
-bool SDAcuari::carregaConfiguracio()
+bool SDAcuari::carregaConfiguracio(bool initSD)
 {
 	File dataFile;
 
 	bool ret = true;
 	
-	Serial.print(F("Iniciant SD ..."));
-	if (!SD.begin(4))
+	Serial.print(F("Ini SD"));
+
+	if (initSD)
 	{
-		Serial.println(F("Error a l'iniciar la targeta SD"));
-		ret = false;
-		return;
+		if (!SD.begin(4))
+		{
+			Serial.println(F("Err init SD"));
+			ret = false;
+			return;
+		}
+		Serial.println(F("SD ini ok"));
 	}
 
-	Serial.println(F("SD iniciada correctamente"));
 
 	dataFile = SD.open(nomFitxerConfig);
 	if (dataFile)
@@ -31,59 +35,80 @@ bool SDAcuari::carregaConfiguracio()
 	}
 	else
 	{
-		Serial.println(F("Error a l'obrir l'arxiu."));
+		Serial.println(F("Err Open File."));
 		ret = false;
 	}
 
 	return ret;
 }
 
-bool SDAcuari::saveConfiguracio()
+
+bool SDAcuari::saveValueConfig(int value, String var)
 {
 	File dataFile;
-
 	bool ret = true;
 
-	Serial.print(F("Iniciant SD ..."));
-	if (!SD.begin(4))
-	{
-		Serial.println(F("Error a l'iniciar la targeta SD"));
-		ret = false;
-		return;
-	}
+	int valorActual = getIntValueConfig(var);
 
-	Serial.println(F("SD iniciada correctamente"));
-
-	dataFile = SD.open(nomFitxerConfig);
-	if (dataFile)
+	if (value != valorActual)
 	{
 
-		if (dataFile.available())
+		SD.remove(nomFitxerConfig);
+
+		dataFile = SD.open(nomFitxerConfig, FILE_WRITE);
+		if (dataFile)
 		{
-			contingutConfiguracio = dataFile.readString();
+			if (contingutConfiguracio.indexOf(var) <= 0)
+			{
+				contingutConfiguracio += var + "=" + value + "\r\n";
+			}
+			else
+			{
+				contingutConfiguracio.replace(var + "=" + valorActual, var + "=" + value);
+			}			
+			
+			dataFile.write(contingutConfiguracio.c_str());
+
+			dataFile.close();
+		}
+		else
+		{
+			Serial.println(F("Err Open File."));
+			ret = false;
 		}
 
-		dataFile.close();
-	}
-	else
-	{
-		Serial.println(F("Error a l'obrir l'arxiu."));
-		ret = false;
 	}
 
 	return ret;
+}
+
+
+
+
+int SDAcuari::getPosicioValorVariable(String var)
+{
+	int indexVar = contingutConfiguracio.indexOf(var);
+	int indexValor = indexVar + var.length() + 1;
+
+	return indexValor;
 }
 
 int SDAcuari::getIntValueConfig(String var)
 {
-	int indexVar =  contingutConfiguracio.indexOf(var);
-	int indexValor = indexVar + var.length() + 1;
-	String sValor = contingutConfiguracio.substring(indexValor, indexValor + 1);
-	Serial.println("getIntValueConfig");
-	Serial.println(var);
-	Serial.println(sValor);
+	int valor = -1;
+	int indexValor = getPosicioValorVariable(var);
 
-	return -1;
+	if (indexValor >= 0)
+	{
+		String sValor = contingutConfiguracio.substring(indexValor, indexValor + 1);
+		Serial.println(F("getIntValueConfig"));
+		Serial.println(var);
+		Serial.println(sValor);
+
+		valor = sValor.toInt();
+	}
+
+	return valor;
 }
 
 String SDAcuari::getConfiguracio()
@@ -91,12 +116,10 @@ String SDAcuari::getConfiguracio()
 	return contingutConfiguracio;
 }
 
-
 SDAcuari::SDAcuari(String pnomFitxerConfig)
 {
 	nomFitxerConfig = pnomFitxerConfig;
 }
-
 
 SDAcuari::~SDAcuari()
 {

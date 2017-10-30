@@ -82,8 +82,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ControlAplicacio.h" />
     <ClInclude Include="cPin.h" />
     <ClInclude Include="Eines.h" />
+    <ClInclude Include="LCDAcuari.h" />
     <ClInclude Include="SDAcuari.h" />
     <ClInclude Include="__vm\.AquariGran.vsarduino.h" />
   </ItemGroup>
@@ -91,8 +93,10 @@
     <Text Include="Codi Extern.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ControlAplicacio.cpp" />
     <ClCompile Include="cPin.cpp" />
     <ClCompile Include="Eines.cpp" />
+    <ClCompile Include="LCDAcuari.cpp" />
     <ClCompile Include="SDAcuari.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

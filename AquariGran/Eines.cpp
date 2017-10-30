@@ -27,3 +27,11 @@ void Eines::EscriuPinDigital(int valPin, int numPin)
 	}
 
 }
+
+void Eines::InverteixValorRele(int &valpinRele)
+{
+	if (valpinRele == 1)
+	    valpinRele = 0;
+	else
+		valpinRele = 1;
+}

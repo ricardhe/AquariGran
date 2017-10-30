@@ -30,6 +30,12 @@
     <ClInclude Include="Eines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LCDAcuari.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlAplicacio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Codi Extern.txt">
@@ -44,6 +50,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Eines.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LCDAcuari.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlAplicacio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
