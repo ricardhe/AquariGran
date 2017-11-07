@@ -35,3 +35,18 @@ void Eines::InverteixValorRele(int &valpinRele)
 	else
 		valpinRele = 1;
 }
+
+bool Eines::datatimeMesPetitQue(DateTime quin, DateTime amb)
+{
+	return (quin.unixtime() < amb.unixtime());
+}
+
+DateTime Eines::TransformaHoraEnData(char* chora, DateTime ara)
+{
+	String val = String(chora);
+
+	int hora = val.substring(0, 2).toInt();
+	int minuts = val.substring(3, 2).toInt();
+
+	return DateTime(ara.year(), ara.month(), ara.day(), (uint8_t)hora, (uint8_t)minuts, 0);
+}

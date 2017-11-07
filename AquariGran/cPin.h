@@ -9,6 +9,8 @@
 #include "LCDAcuari.h"
 #include "ControlAplicacio.h"
 #include "RTClib.h"
+//#include <Time.h>
+//#include <DS1307RTC.h>
 //#include "DateTime\DateTime.h"
 
 struct subMenu
@@ -24,16 +26,14 @@ struct interval {
 
 struct programacioDiaria
 {
-	int diaDeLaSetmana;
-	int numIntervals;
-	//int intervalsDiaris[12][12];
-	interval* intervalsDiaris;
-	
+	int diaDeLaSetmana=-1;
+	int numIntervals=0;
+	interval intervalsDiaris[10];
 };
 
 struct programacioSetmanal
 {
-	programacioDiaria *dies;
+	programacioDiaria dies[7];
 };
 
 class cPin
@@ -45,7 +45,7 @@ private:
 
 	char* nom;
 	int numPin;
-	int valPinDefecte;
+	int pinActiu;
 	int valPinActual;
 	char tipusOberturaDefecte;
 	char tipusProgramacio;
@@ -62,28 +62,40 @@ private:
 
 	bool *algunMenuTeElControl;
 	DateTime horaProperaArrencadaPerProgramacio;
+	DateTime horaProperaParadaPerProgramacio;
 	bool paratPerProgramacio = false;
+	bool activatPerProgramacio = false;
 
 	RTC_DS3231 *rtc;
 
-
+	const char* operActiu = "ActiuoNo";
 	const char* operEstat = "Estat";
 	const char* oper10Min = "oper10Min";
 	const char* oper30Min = "oper30Min";
 	const char* oper1Hora = "oper1Hora";
 
+	 char ObertPerDefecte = 'O';
+	 char TancatPerDefecte = 'T';
+	 char TipusProgramacioDiaria = 'D';
+	 char TipusProgramacioSetmanal = 'S';
+	 char TipusProgramacioSempreObert = 'A';
+
 	void ExecutaConfiguracioInicial();
-	bool datatimeMesPetitQue(DateTime quin, DateTime amb);
+	//bool datatimeMesPetitQue(DateTime quin, DateTime amb);
 	void SerialPrintDate(DateTime val);
 	void PararPinsDurantUnsMinuts(int minuts);
+	void DibuixaPrimeraOpcioSubMenu(subMenu sub);
+	void DibuixaSegonaOpcioSubMenu(subMenu sub);
 
 public:
 	cPin();
 	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, subMenu psubMenu[], int pnumSubOpcions,  SDAcuari &psd, Eines &putils, LCDAcuari &plcdAcuari);
 	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, programacioDiaria pProgDiaria, subMenu psubMenu[], int pnumSubOpcions,  SDAcuari &psd, Eines &putils, LCDAcuari &plcdAcuari);
-	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, programacioSetmanal pProgDiaria, subMenu psubMenu[], int pnumSubOpcions,  SDAcuari &psd, Eines &putils, LCDAcuari &plcdAcuari);
+	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, programacioDiaria pr1, programacioDiaria pr2, programacioDiaria pr3, programacioDiaria pr4, programacioDiaria pr5, programacioDiaria pr6, programacioDiaria pr7,  subMenu psubMenu[], int pnumSubOpcions,  SDAcuari &psd, Eines &putils, LCDAcuari &plcdAcuari);
 
-	bool setValorInvertit();
+	bool setValorActualInvertit();
+
+	bool setValorpinActiuInvertit();
 
 	bool Desactiva();
 
@@ -106,6 +118,10 @@ public:
 	void para10Minuts();
 	void para30Minuts();
 	void para1Hora();
+
+	bool AlgunIntervalAfectat(programacioDiaria prog, DateTime &HoraFi);
+
+	bool AlgunIntervalSetmanalAfectat(programacioSetmanal prog, DateTime &HoraFi);
 
 	~cPin();
 };

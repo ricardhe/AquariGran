@@ -2,8 +2,8 @@
 class ControlAplicacio
 {
 public:
-	bool algunMenuTeElControl;
-	bool reAgafarUltimMenu;
+	bool algunMenuTeElControl=false;
+	bool reAgafarUltimMenu=false;
 	char ultimaShortKey;
 	ControlAplicacio();
 	~ControlAplicacio();

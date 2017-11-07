@@ -10,6 +10,14 @@
 #include "SDAcuari.h"
 #include "ControlAplicacio.h"
 
+//#include <Time.h>
+//#include <DS1307RTC.h>
+
+//#include <DateTimeStrings.h>
+
+#include "MemoryFree.h"
+
+
 	Eines utils = Eines();
 
 	const char ObertPerDefecte = 'O';
@@ -18,6 +26,7 @@
 	const char TipusProgramacioSetmanal = 'S';
 	const char TipusProgramacioSempreObert = 'A';
 
+    char* operActiu = "ActiuoNo";
 	char* operEstat = "Estat";
 	char* oper10Min = "oper10Min";
 	char* oper30Min = "oper30Min";
@@ -160,12 +169,13 @@
 	MenuItem mPararCirculacio = MenuItem(cntPararCirculacio, 'P');
 	MenuItem mCanviAigua = MenuItem(cntCanviAigua, 'Q');
 
+	subMenu sbmActiuoNo = { "Actiu",   operActiu };
 	subMenu sbmEstat = { "Estat",   operEstat };
 	subMenu sbm10Min = { "P. 10 min",  oper10Min };
 	subMenu sbm30Min = { "P. 30 min",  oper30Min };
 	subMenu sbm1Hora = { "P. 1 hora",  oper1Hora };
 
-	subMenu menusSkimmer[4] = { sbmEstat ,sbm10Min ,sbm30Min ,sbm1Hora };
+	subMenu menusGenerics[5] = { sbmActiuoNo, sbmEstat ,sbm10Min ,sbm30Min ,sbm1Hora };
 
 
 #pragma endregion
@@ -183,7 +193,7 @@
 	int numPinReleVentiladorAcuari = 45;
 	int numPinRelemVentiladorInternSump = 2;
 	int numPinReleLlumRefugi = 2;
-	int numPinReleUV = 2;
+	int numPinReleUV = 30;
 
 	int valpinReleSkimmer = 1;
 	int valpinReleBombaCirc1 = 1;
@@ -221,119 +231,116 @@
 		pinVentiladorAcuari.executemVolta();
 		pinVentiladorInternSump.executemVolta();
 		pinLlumRefugi.executemVolta();
-		pinUV.executemVolta();
+		//pinUV.executemVolta();
 	}
+
+	//void copy(int* src, int* dst, int len) {
+	//		memcpy(dst, src, sizeof(src[0])*len);
+	//}
+
 
 	void ConfigurarPins()
 	{
 
-#pragma region Skimmer
-
-		pinSkimmer = cPin(cntSkimmer, numPinReleSkimmer, valpinReleSkimmer, ObertPerDefecte, TipusProgramacioSempreObert, menusSkimmer, 4, sdAcuari, utils, lcdAcuari);
-
-#pragma endregion
-
-		//#pragma region BombaCirculacio1
-
-		//	pinBombaCirc1 = cPin(cntBombaCircuilacio1,  numPinReleBombaCirc1, valpinReleBombaCirc1, ObertPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
-
-		//#pragma endregion
-
-		//#pragma region BombaCirculacio2
-
-		//	pinBombaCirc2 = cPin(cntBombaCircuilacio2, numPinReleBombaCirc2, valpinReleBombaCirc2, ObertPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
-
-		//#pragma endregion
-
-		//#pragma region BombesPujada
-
-		//	pinBombesPujada = cPin(cntBombesPujada, numPinReleBombesPujada, valpinReleBombesPujada, ObertPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
-
-		//#pragma endregion
-
-		//#pragma region BombaSump
-
-		//	programacioDiaria progBombaSump;
-		//	interval ibSump1 = { "0730", "0900" };
-		//	interval ibSump2 = { "1300", "1500" };
-		//	interval ibSump3 = { "1900", "2100" };
-		//	interval ibSump4 = { "0010", "0400" };
-		//	interval intervelsBombaSump[4] = { ibSump1, ibSump2, ibSump3, ibSump4 };
-
-		//	progBombaSump.intervalsDiaris = intervelsBombaSump;
-		//	progBombaSump.numIntervals = 4;
-		//	progBombaSump.diaDeLaSetmana = -1;
-
-		//	pinBombaSump = cPin(cntBombaSump, numPinReleBombaSump, valpinReleBombaSump, TancatPerDefecte, TipusProgramacioDiaria, progBombaSump, sdAcuari, utils, lcdAcuari);
-
-		//#pragma endregion
-
-		//#pragma region Calentador
-
-		//	pinCalentador = cPin(cntCalentador, numPinReleCalentador, valpinReleCalentador, TancatPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
-
-		//#pragma endregion
-
-		//#pragma region Refrigerador
-
-		//	pinRefrigerador = cPin(cntRefrigerador, numPinReleRefrigerador, valpinReleRefrigerador, TancatPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
-
-		//#pragma endregion
-
-		//#pragma region Ventilador Acuari
-
-		//	 pinVentiladorAcuari = cPin(cntVentiladorAcuari, numPinReleVentiladorAcuari, valpinReleVentiladorAcuari, TancatPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
-
-		//#pragma endregion
-
-		//#pragma region VentiladorInternSump
-
-		//	 pinVentiladorInternSump = cPin(cntVentiladorInternSump, numPinRelemVentiladorInternSump, valpinRelemVentiladorInternSump, TancatPerDefecte, TipusProgramacioSempreObert, sdAcuari, utils, lcdAcuari);
-
-		//#pragma endregion
-
-		//#pragma region Llum Refugi
-
-		//	 programacioDiaria progLlumRefugi;
-		//	 interval ibLlumRefugi1 = { "0730", "0900" };
-		//	 interval intervelsLlumRefugi[1] = { ibLlumRefugi1 };
-
-		//	 progLlumRefugi.intervalsDiaris = intervelsLlumRefugi;
-		//	 progLlumRefugi.numIntervals = 1;
-		//	 progLlumRefugi.diaDeLaSetmana = -1;
-
-		//	 pinLlumRefugi = cPin(cntLlumRefugi, numPinReleLlumRefugi, valpinReleLlumRefugi, TancatPerDefecte, TipusProgramacioDiaria, progLlumRefugi, sdAcuari, utils, lcdAcuari);
-
-		//#pragma endregion
-
 		//#pragma region UV
 
-		//	 programacioDiaria progDillunsUV;
-		//	 interval ibDillunsUV1 = { "00:05", "0900" };
-		//	 interval intervelsDillunsUV[1] = { ibDillunsUV1 };
+		//programacioSetmanal progSemUV = programacioSetmanal();
 
-		//	 progDillunsUV.intervalsDiaris = intervelsDillunsUV;
-		//	 progDillunsUV.numIntervals = 1;
-		//	 progDillunsUV.diaDeLaSetmana = 1;
+		programacioDiaria prUVDilluns = programacioDiaria();
+		prUVDilluns.intervalsDiaris[0] = { "00:05","0900" };
+		prUVDilluns.numIntervals = 1;
+		prUVDilluns.diaDeLaSetmana = 1; //dilluns
+
+		programacioDiaria prUVDivendres = programacioDiaria();
+		prUVDivendres.intervalsDiaris[0] = { "00:05","0900" };
+		prUVDivendres.numIntervals = 1;
+		prUVDivendres.diaDeLaSetmana = 5; //divendres
 
 
-		//	 programacioDiaria progDivendresUV;
-		//	 interval ibDivendresUV1 = { "00:05", "0900" };
-		//	 interval intervelsDivendresUV[1] = { ibDivendresUV1 };
+		programacioDiaria prBuida = programacioDiaria();
+		prBuida.numIntervals = 0;
 
-		//	 progDivendresUV.intervalsDiaris = intervelsDivendresUV;
-		//	 progDivendresUV.numIntervals = 1;
-		//	 progDivendresUV.diaDeLaSetmana = 5;
-
-		//	 programacioDiaria diesUV[2] = { progDillunsUV ,  progDivendresUV };
-
-		//	 programacioSetmanal progSemUV;
-		// 
-		//	 progSemUV.dies = diesUV;
-
-		//	 pinUV = cPin(cntUV, numPinReleUV, valpinReleUV, TancatPerDefecte, TipusProgramacioSetmanal, progSemUV, sdAcuari, utils, lcdAcuari);
+		pinUV = cPin(cntUV, numPinReleUV, valpinReleUV, TancatPerDefecte, TipusProgramacioSetmanal, prUVDilluns, prUVDivendres, prBuida, prBuida, prBuida, prBuida, prBuida, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
 
 		//#pragma endregion
+
+#pragma region Skimmer
+
+		pinSkimmer = cPin(cntSkimmer, numPinReleSkimmer, valpinReleSkimmer, ObertPerDefecte, TipusProgramacioSempreObert, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+
+#pragma endregion
+
+		#pragma region BombaCirculacio1
+
+			pinBombaCirc1 = cPin(cntBombaCircuilacio1,  numPinReleBombaCirc1, valpinReleBombaCirc1, ObertPerDefecte, TipusProgramacioSempreObert, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+
+		#pragma endregion
+
+		#pragma region BombaCirculacio2
+
+			pinBombaCirc2 = cPin(cntBombaCircuilacio2, numPinReleBombaCirc2, valpinReleBombaCirc2, ObertPerDefecte, TipusProgramacioSempreObert, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+
+		#pragma endregion
+
+		#pragma region BombesPujada
+
+			pinBombesPujada = cPin(cntBombesPujada, numPinReleBombesPujada, valpinReleBombesPujada, ObertPerDefecte, TipusProgramacioSempreObert, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+
+		#pragma endregion
+
+		#pragma region BombaSump
+		
+			programacioDiaria progBombaSump = programacioDiaria();
+			progBombaSump.intervalsDiaris[0] = { "0730", "0900" };
+			progBombaSump.intervalsDiaris[1] = { "1300", "1500" };
+			progBombaSump.intervalsDiaris[2] = { "1900", "2100" };
+			progBombaSump.intervalsDiaris[3] = { "0010", "0400" };
+
+			progBombaSump.numIntervals = 4;
+			progBombaSump.diaDeLaSetmana = -1;
+
+			pinBombaSump = cPin(cntBombaSump, numPinReleBombaSump, valpinReleBombaSump, TancatPerDefecte, TipusProgramacioDiaria, progBombaSump, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+
+		#pragma endregion
+
+		#pragma region Calentador
+
+			pinCalentador = cPin(cntCalentador, numPinReleCalentador, valpinReleCalentador, TancatPerDefecte, TipusProgramacioSempreObert, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+
+		#pragma endregion
+
+		#pragma region Refrigerador
+
+			pinRefrigerador = cPin(cntRefrigerador, numPinReleRefrigerador, valpinReleRefrigerador, TancatPerDefecte, TipusProgramacioSempreObert, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+
+		#pragma endregion
+
+		#pragma region Ventilador Acuari
+
+			 pinVentiladorAcuari = cPin(cntVentiladorAcuari, numPinReleVentiladorAcuari, valpinReleVentiladorAcuari, TancatPerDefecte, TipusProgramacioSempreObert, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+
+		#pragma endregion
+
+		#pragma region VentiladorInternSump
+
+			 pinVentiladorInternSump = cPin(cntVentiladorInternSump, numPinRelemVentiladorInternSump, valpinRelemVentiladorInternSump, TancatPerDefecte, TipusProgramacioSempreObert, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+
+		#pragma endregion
+
+		#pragma region Llum Refugi
+
+
+
+			 programacioDiaria progLlumRefugi = programacioDiaria();
+			 progLlumRefugi.intervalsDiaris[0] = { "0730", "0900" };
+			 progLlumRefugi.numIntervals = 1;
+			 progLlumRefugi.diaDeLaSetmana = -1;
+
+			 pinLlumRefugi = cPin(cntLlumRefugi, numPinReleLlumRefugi, valpinReleLlumRefugi, TancatPerDefecte, TipusProgramacioDiaria, progLlumRefugi, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+
+		#pragma endregion
+
+
 
 	}
 
@@ -343,46 +350,46 @@
 
 
 
-	void menuSetup()
+void menuSetup()
+{
+	//Serial.println(F("Config Menú..."));
+
+	mEstatReles.addRight(mSkimmer).addRight(mBombaCircuilacio1).addRight(mBombaCircuilacio2).addRight(mBombesPujada).addRight(mBombaSump).addRight(mCalentador).addRight(mRefrigerador).addRight(mVentiladorAcuari).addRight(mVentiladorInternSump).addRight(mLlumRefugi).addRight(mUV);
+	mAccions.addRight(mDonardeMenjar).addRight(mPararCirculacio).addRight(mCanviAigua);
+
+	menu.getRoot().add(mEstatReles).add(mAccions);
+}
+
+void menuUseEvent(MenuUseEvent used)
+{
+
+	//Serial.print(F("Menu use "));
+	//Serial.println(used.item.getName());
+
+	if (used.item.getName() == cntSkimmer) //comparison using a string literal
 	{
-		Serial.println(F("Config Menú..."));
 
-		mEstatReles.addRight(mSkimmer).addRight(mBombaCircuilacio1).addRight(mBombaCircuilacio2).addRight(mBombesPujada).addRight(mBombaSump).addRight(mCalentador).addRight(mRefrigerador).addRight(mVentiladorAcuari).addRight(mVentiladorInternSump).addRight(mLlumRefugi).addRight(mUV);
-		mAccions.addRight(mDonardeMenjar).addRight(mPararCirculacio).addRight(mCanviAigua);
+		//Serial.println(F("menuUseEvent found Skimmer"));
+		pinSkimmer.agafaElControl(control, used.item.getShortkey(), rtc); //menu, used.item.getShortkey()		
+		PinAmbControl = &pinSkimmer;
 
-		menu.getRoot().add(mEstatReles).add(mAccions);
+		//algunMenuTeElControl = true;
+		//used.item.getShortkey();
+		//pinSkimmer.setValorInvertit();
+		//pinSkimmer.indicaStatusActivacioLCD();
+
 	}
 
-	void menuUseEvent(MenuUseEvent used)
-	{
+}
 
-		Serial.print(F("Menu use "));
-		Serial.println(used.item.getName());
+void menuChangeEvent(MenuChangeEvent changed)
+{
+	//Serial.print(F("Menu change "));
+	//Serial.print(changed.from.getName());
 
-		if (used.item.getName() == cntSkimmer) //comparison using a string literal
-		{
-
-			Serial.println(F("menuUseEvent found Skimmer"));
-			pinSkimmer.agafaElControl(control, used.item.getShortkey(), rtc); //menu, used.item.getShortkey()		
-			PinAmbControl = &pinSkimmer;
-
-			//algunMenuTeElControl = true;
-			//used.item.getShortkey();
-			//pinSkimmer.setValorInvertit();
-			//pinSkimmer.indicaStatusActivacioLCD();
-
-		}
-
-	}
-
-	void menuChangeEvent(MenuChangeEvent changed)
-	{
-		Serial.print(F("Menu change "));
-		Serial.print(changed.from.getName());
-
-		Serial.print(" ");
-		Serial.println(changed.to.getName());
-	}
+	//Serial.print(" ");
+	//Serial.println(changed.to.getName());
+}
 
 
 int TransformaValorJoystick(int val) //transformem en un valor discret el valor del joystick
@@ -416,7 +423,7 @@ void setup() {
 
 	menuSetup();
 	EscriuPantalla();
-	Serial.println(F("Ini Nav menú"));
+	//Serial.println(F("Ini Nav menú"));
 
 	//utils.EscriuPinDigital(valpinReleSkimmer, numPinReleSkimmer);
 
@@ -437,11 +444,15 @@ void setup() {
 	// Si se ha perdido la corriente, fijar fecha y hora
 	if (rtc.lostPower()) {
 		// Fijar a fecha y hora de compilacion
-		rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+		//rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 
 		// Fijar a fecha y hora específica. En el ejemplo, 21 de Enero de 2016 a las 03:00:00
-		// rtc.adjust(DateTime(2016, 1, 21, 3, 0, 0));
+		//rtc.adjust(DateTime(2017, 10, 31, 22, 37, 0));
 	}
+
+	//rtc.adjust(DateTime(2017, 10, 31, 22, 42, 0));
+
+	printDate(rtc.now());
 
 	ConfigurarPins();
 
@@ -453,7 +464,7 @@ void setup() {
 		lcd.println(ErrorSetup);
 	}
 
-
+	Serial.print("freeMemory()=");        Serial.println(freeMemory());
 
 }
 
@@ -565,6 +576,7 @@ void loop() {
 
 	}
 
+	//Serial.print("freeMemory()=");        Serial.println(freeMemory());
 	delay(tempsDelay);
 
 }
@@ -593,7 +605,23 @@ void EscriuPantalla()
 }
 
 
-
+void printDate(DateTime date)
+{
+	Serial.print(date.year(), DEC);
+	Serial.print('/');
+	Serial.print(date.month(), DEC);
+	Serial.print('/');
+	Serial.print(date.day(), DEC);
+	Serial.print(" (");
+	Serial.print(daysOfTheWeek[date.dayOfTheWeek()]);
+	Serial.print(") ");
+	Serial.print(date.hour(), DEC);
+	Serial.print(':');
+	Serial.print(date.minute(), DEC);
+	Serial.print(':');
+	Serial.print(date.second(), DEC);
+	Serial.println();
+}
 
 //void EscriuSubApartatPantalla()
 //{
@@ -618,20 +646,3 @@ void EscriuPantalla()
 //
 //}
 
-//void printDate(DateTime date)
-//{
-//	Serial.print(date.year(), DEC);
-//	Serial.print('/');
-//	Serial.print(date.month(), DEC);
-//	Serial.print('/');
-//	Serial.print(date.day(), DEC);
-//	Serial.print(" (");
-//	Serial.print(daysOfTheWeek[date.dayOfTheWeek()]);
-//	Serial.print(") ");
-//	Serial.print(date.hour(), DEC);
-//	Serial.print(':');
-//	Serial.print(date.minute(), DEC);
-//	Serial.print(':');
-//	Serial.print(date.second(), DEC);
-//	Serial.println();
-//}
