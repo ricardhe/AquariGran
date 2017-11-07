@@ -251,27 +251,51 @@
 		prUVDilluns.numIntervals = 1;
 		prUVDilluns.diaDeLaSetmana = 1; //dilluns
 
+		programacioDiaria prUVDimarts = programacioDiaria();
+		prUVDimarts.intervalsDiaris[0] = { "00:05","0900" };
+		prUVDimarts.numIntervals = 1;
+		prUVDimarts.diaDeLaSetmana = 2; 
+
+		programacioDiaria prUVDimecres = programacioDiaria();
+		prUVDimecres.intervalsDiaris[0] = { "00:05","0900" };
+		prUVDimecres.numIntervals = 1;
+		prUVDimecres.diaDeLaSetmana = 3;
+
+		programacioDiaria prUVDijous = programacioDiaria();
+		prUVDijous.intervalsDiaris[0] = { "00:05","0900" };
+		prUVDijous.numIntervals = 1;
+		prUVDijous.diaDeLaSetmana = 3;
+
 		programacioDiaria prUVDivendres = programacioDiaria();
 		prUVDivendres.intervalsDiaris[0] = { "00:05","0900" };
 		prUVDivendres.numIntervals = 1;
 		prUVDivendres.diaDeLaSetmana = 5; //divendres
 
+		programacioDiaria prUVDissabte = programacioDiaria();
+		prUVDissabte.intervalsDiaris[0] = { "00:05","0900" };
+		prUVDissabte.numIntervals = 1;
+		prUVDissabte.diaDeLaSetmana = 3;
+
+		programacioDiaria prUVDiumenge= programacioDiaria();
+		prUVDiumenge.intervalsDiaris[0] = { "00:05","0900" };
+		prUVDiumenge.numIntervals = 1;
+		prUVDiumenge.diaDeLaSetmana = 3;
 
 		programacioDiaria prBuida = programacioDiaria();
 		prBuida.numIntervals = 0;
 
-		pinUV = cPin(cntUV, numPinReleUV, valpinReleUV, TancatPerDefecte, TipusProgramacioSetmanal, prUVDilluns, prUVDivendres, prBuida, prBuida, prBuida, prBuida, prBuida, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
+		pinUV = cPin(cntUV, numPinReleUV, valpinReleUV, TancatPerDefecte, TipusProgramacioSetmanal,1, prUVDilluns, prUVDimarts, prUVDimecres, prUVDijous, prUVDivendres, prUVDissabte, prUVDiumenge, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
 
 		//#pragma endregion
 
 #pragma region Skimmer
-
+		Serial.println("Skimmer");
 		pinSkimmer = cPin(cntSkimmer, numPinReleSkimmer, valpinReleSkimmer, ObertPerDefecte, TipusProgramacioSempreObert, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
 
 #pragma endregion
 
 		#pragma region BombaCirculacio1
-
+		Serial.println("pinBombaCirc1");
 			pinBombaCirc1 = cPin(cntBombaCircuilacio1,  numPinReleBombaCirc1, valpinReleBombaCirc1, ObertPerDefecte, TipusProgramacioSempreObert, menusGenerics, 5, sdAcuari, utils, lcdAcuari);
 
 		#pragma endregion
@@ -526,11 +550,8 @@ void loop() {
 	else
 	{
 		DateTime now = rtc.now();
-
-
 		if (!digitalRead(joyPush)) // si apreta el botó del mig del joystick
 		{
-
 			if (control.algunMenuTeElControl)
 			{
 				PinAmbControl->executaSubMenu();
@@ -541,7 +562,6 @@ void loop() {
 				menu.use();
 				delay(tempsDelay);
 			}
-			
 		}
 		else
 		{
@@ -549,10 +569,8 @@ void loop() {
 			valueX = TransformaValorJoystick(analogRead(joyPinX));
 			if (valueX == 0)  // valueX pot ser 1 o 0, si és -1 no fer res.
 			{
-
 				if (control.algunMenuTeElControl)
 				{
-
 				}
 				else
 				{
@@ -560,14 +578,11 @@ void loop() {
 					EscriuPantalla();
 					delay(tempsDelay);
 				}
-
 			}
 			else if (valueX == 1)
 			{
-
 				if (control.algunMenuTeElControl)
 				{
-
 				}
 				else
 				{
@@ -575,13 +590,11 @@ void loop() {
 					EscriuPantalla();
 					delay(tempsDelay);
 				}
-
 			}
 
 			valueY = TransformaValorJoystick(analogRead(joyPinY));
 			if (valueY == 0)  // valueY pot ser 1 o 0, si és -1 no fer res.
 			{
-
 				if (control.algunMenuTeElControl)
 				{
 					PinAmbControl->avancaSubmenu();
@@ -592,11 +605,9 @@ void loop() {
 					EscriuPantalla();
 					delay(tempsDelay);
 				}
-
 			}
 			else if (valueY == 1)
 			{
-
 				if (control.algunMenuTeElControl)
 				{
 					PinAmbControl->retrocedeixSubMenu();
@@ -607,18 +618,12 @@ void loop() {
 					EscriuPantalla();
 					delay(tempsDelay);
 				}
-
 			}
-
 		}
-
 		ExecutaVoltaPins();
-
 	}
-
 	//Serial.print("freeMemory()=");        Serial.println(freeMemory());
 	delay(tempsDelay);
-
 }
 
 void EscriuPantalla()
@@ -636,11 +641,15 @@ void EscriuPantalla()
 	}
 	else
 	{
-		if (menu.getCurrent().getName() == "Skimmer")
+		if (control.algunMenuTeElControl)
 		{
-			pinSkimmer.indicaStatusActivacioLCD(2);
+			PinAmbControl->indicaStatusActivacioLCD(2);
 		}
 
+		//if (menu.getCurrent().getName() == "Skimmer")
+		//{
+		//	pinSkimmer.indicaStatusActivacioLCD(2);
+		//}
 	}
 }
 

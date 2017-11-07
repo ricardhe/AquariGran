@@ -95,8 +95,12 @@ int SDAcuari::getPosicioValorVariable(String var)
 
 int SDAcuari::getIntValueConfig(String var)
 {
+
+	Serial.print("g Val "); Serial.println(var);
+
 	int valor = -1;
 	int indexValor = getPosicioValorVariable(var);
+	Serial.print("g Val position"); Serial.println(indexValor);
 
 	if (indexValor >= 0)
 	{
@@ -106,6 +110,10 @@ int SDAcuari::getIntValueConfig(String var)
 		Serial.println(sValor);
 
 		valor = sValor.toInt();
+	}
+	else
+	{
+		Serial.println(F("Var not found sd."));
 	}
 
 	return valor;

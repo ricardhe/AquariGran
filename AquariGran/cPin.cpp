@@ -55,17 +55,19 @@ cPin::cPin(char* pNom, int pNumPin, int ppinActiu, char ptipusOberturaDefecte, c
 	ExecutaConfiguracioInicial();
 }
 
-cPin::cPin(char* pNom, int pNumPin, int ppinActiu, char ptipusOberturaDefecte, char ptipusProgramacio, 
+cPin::cPin(char* pNom, int pNumPin, int ppinActiu, char ptipusOberturaDefecte, char ptipusProgramacio, int i,
 			programacioDiaria pr1, programacioDiaria pr2, programacioDiaria pr3, programacioDiaria pr4, programacioDiaria pr5, programacioDiaria pr6, programacioDiaria pr7, 
 			subMenu psubMenu[], int pnumSubOpcions,  SDAcuari &psd, Eines &putils, LCDAcuari &plcdAcuari)
 {
-	Serial.println(F("ini d. Setm"));
+	//Serial.println(F("ini d. Setm"));
 	nom = pNom;
 	numPin = pNumPin;
 	pinActiu = ppinActiu;
 	tipusOberturaDefecte = ptipusOberturaDefecte;
 	tipusProgramacio = ptipusProgramacio;
 	
+
+	prgSetmanal = programacioSetmanal();
 	prgSetmanal.dies[0] = pr1;
 	prgSetmanal.dies[1] = pr2;
 	prgSetmanal.dies[2] = pr3;
@@ -82,7 +84,7 @@ cPin::cPin(char* pNom, int pNumPin, int ppinActiu, char ptipusOberturaDefecte, c
 	opcionsSubMenus = psubMenu;
 	Serial.println(F("exec d. Setm"));
 	ExecutaConfiguracioInicial();
-	Serial.println(F("ini d. Setm"));
+	Serial.println(F("FI d. Setm"));
 }
 
 void cPin::ExecutaConfiguracioInicial()
@@ -103,6 +105,7 @@ void cPin::ExecutaConfiguracioInicial()
 	else
 		valPinActual = 0;
 
+	Serial.println("Anem a escriure pin digi");
 	utils->EscriuPinDigital(valPinActual, numPin);
 }
 

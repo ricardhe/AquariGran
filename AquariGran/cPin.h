@@ -91,7 +91,7 @@ public:
 	cPin();
 	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, subMenu psubMenu[], int pnumSubOpcions,  SDAcuari &psd, Eines &putils, LCDAcuari &plcdAcuari);
 	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, programacioDiaria pProgDiaria, subMenu psubMenu[], int pnumSubOpcions,  SDAcuari &psd, Eines &putils, LCDAcuari &plcdAcuari);
-	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, programacioDiaria pr1, programacioDiaria pr2, programacioDiaria pr3, programacioDiaria pr4, programacioDiaria pr5, programacioDiaria pr6, programacioDiaria pr7,  subMenu psubMenu[], int pnumSubOpcions,  SDAcuari &psd, Eines &putils, LCDAcuari &plcdAcuari);
+	cPin(char* pNom, int pNumPin, int pvalPinDefecte, char ptipusOberturaDefecte, char ptipusProgramacio, int i, programacioDiaria pr1, programacioDiaria pr2, programacioDiaria pr3, programacioDiaria pr4, programacioDiaria pr5, programacioDiaria pr6, programacioDiaria pr7,  subMenu psubMenu[], int pnumSubOpcions, SDAcuari &psd, Eines &putils, LCDAcuari &plcdAcuari);
 
 	bool setValorActualInvertit();
 
