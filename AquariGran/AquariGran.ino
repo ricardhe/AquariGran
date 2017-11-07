@@ -366,19 +366,59 @@ void menuUseEvent(MenuUseEvent used)
 	//Serial.print(F("Menu use "));
 	//Serial.println(used.item.getName());
 
+	cPin pinSeleccionat;
+
+	PinAmbControl = 0;
+
 	if (used.item.getName() == cntSkimmer) //comparison using a string literal
 	{
-
-		//Serial.println(F("menuUseEvent found Skimmer"));
-		pinSkimmer.agafaElControl(control, used.item.getShortkey(), rtc); //menu, used.item.getShortkey()		
+		
+		//pinSkimmer.agafaElControl(control, used.item.getShortkey(), rtc); //menu, used.item.getShortkey()		
 		PinAmbControl = &pinSkimmer;
-
-		//algunMenuTeElControl = true;
-		//used.item.getShortkey();
-		//pinSkimmer.setValorInvertit();
-		//pinSkimmer.indicaStatusActivacioLCD();
-
 	}
+	else if (used.item.getName() == cntBombaCircuilacio1)
+	{
+		PinAmbControl = &pinBombaCirc1;
+	}
+	else if (used.item.getName() == cntBombaCircuilacio2)
+	{
+		PinAmbControl = &pinBombaCirc2;
+	}
+	else if (used.item.getName() == cntBombesPujada)
+	{
+		PinAmbControl = &pinBombesPujada;
+	}
+	else if (used.item.getName() == cntBombaSump)
+	{
+		PinAmbControl = &pinBombaSump;
+	}
+	else if (used.item.getName() == cntCalentador)
+	{
+		PinAmbControl = &pinCalentador;
+	}
+	else if (used.item.getName() == cntRefrigerador)
+	{
+		PinAmbControl = &pinRefrigerador;
+	}
+	else if (used.item.getName() == cntVentiladorAcuari)
+	{
+		PinAmbControl = &pinVentiladorAcuari;
+	}
+	else if (used.item.getName() == cntVentiladorInternSump)
+	{
+		PinAmbControl = &pinVentiladorInternSump;
+	}
+	else if (used.item.getName() == cntLlumRefugi)
+	{
+		PinAmbControl = &pinLlumRefugi;
+	}
+	else if (used.item.getName() == cntUV)
+	{
+		PinAmbControl = &pinUV;
+	}
+	
+	if (PinAmbControl != 0)
+		PinAmbControl->agafaElControl(control, used.item.getShortkey(), rtc); //menu, used.item.getShortkey()		
 
 }
 
